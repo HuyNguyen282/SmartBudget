@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../EggHead"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "NCKH-SmartBudget"
+	}
+}
