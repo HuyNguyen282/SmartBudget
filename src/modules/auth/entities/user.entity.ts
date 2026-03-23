@@ -25,4 +25,10 @@ export class User {
   createdAt: Date;
   @Column({ unique: true })
   username: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  resetPasswordToken: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetPasswordExpires: Date | null;
 }

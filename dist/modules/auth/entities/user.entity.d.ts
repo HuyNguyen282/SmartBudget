@@ -6,4 +6,6 @@ export declare class User {
     role: string;
     createdAt: Date;
     username: string;
+    resetPasswordToken: string | null;
+    resetPasswordExpires: Date | null;
 }

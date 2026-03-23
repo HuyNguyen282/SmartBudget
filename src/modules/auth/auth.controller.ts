@@ -4,6 +4,7 @@ import { RegisterUserDto } from './dto/requests/register-user.dto';
 import { LoginDto } from './dto/requests/login.dto';
 import {ForgotPasswordDto} from './dto/requests/forgotpassword.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { ApiOperation, ApiBody } from '@nestjs/swagger';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -19,8 +20,19 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @ApiOperation({ summary: 'Gửi yêu cầu khôi phục mật khẩu (quên mật khẩu)' })
+  @ApiBody({ type: ForgotPasswordDto }) 
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Đặt lại mật khẩu mới bằng Token' })
+  resetPassword(
+    @Body('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    return this.authService.resetPassword(token, newPassword);
   }
 
   @UseGuards(JwtAuthGuard)

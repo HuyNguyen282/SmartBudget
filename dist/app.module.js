@@ -12,6 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./modules/auth/auth.module");
 const wallets_module_1 = require("./modules/wallets/wallets.module");
+const mailer_1 = require("@nestjs-modules/mailer");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,6 +34,21 @@ exports.AppModule = AppModule = __decorate([
                     database: config.get('DB_NAME', 'database'),
                     autoLoadEntities: true,
                     synchronize: false,
+                }),
+            }),
+            mailer_1.MailerModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (config) => ({
+                    transport: {
+                        host: 'smtp.gmail.com',
+                        port: 587,
+                        secure: false,
+                        auth: {
+                            user: config.get('MAIL_USER'),
+                            pass: config.get('MAIL_PASS'),
+                        },
+                    },
                 }),
             }),
             auth_module_1.AuthModule,

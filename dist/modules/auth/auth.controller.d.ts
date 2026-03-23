@@ -13,6 +13,9 @@ export declare class AuthController {
     forgotPassword(dto: ForgotPasswordDto): Promise<{
         message: string;
     }>;
+    resetPassword(token: string, newPassword: string): Promise<{
+        message: string;
+    }>;
     logout(req: any): Promise<{
         message: string;
         user_id: any;

@@ -19,6 +19,7 @@ const register_user_dto_1 = require("./dto/requests/register-user.dto");
 const login_dto_1 = require("./dto/requests/login.dto");
 const forgotpassword_dto_1 = require("./dto/requests/forgotpassword.dto");
 const jwt_auth_guard_1 = require("./jwt-auth.guard");
+const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -32,6 +33,9 @@ let AuthController = class AuthController {
     }
     async forgotPassword(dto) {
         return this.authService.forgotPassword(dto);
+    }
+    resetPassword(token, newPassword) {
+        return this.authService.resetPassword(token, newPassword);
     }
     async logout(req) {
         return this.authService.logout(req.user);
@@ -54,11 +58,22 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Post)('forgot-password'),
+    (0, swagger_1.ApiOperation)({ summary: 'Gửi yêu cầu khôi phục mật khẩu (quên mật khẩu)' }),
+    (0, swagger_1.ApiBody)({ type: forgotpassword_dto_1.ForgotPasswordDto }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [forgotpassword_dto_1.ForgotPasswordDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    (0, swagger_1.ApiOperation)({ summary: 'Đặt lại mật khẩu mới bằng Token' }),
+    __param(0, (0, common_1.Body)('token')),
+    __param(1, (0, common_1.Body)('newPassword')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "resetPassword", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('logout'),

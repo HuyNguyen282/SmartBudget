@@ -49,15 +49,19 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
+const crypto = __importStar(require("crypto"));
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
+const mailer_1 = require("@nestjs-modules/mailer");
 let AuthService = class AuthService {
     usersRepo;
     jwtService;
-    constructor(usersRepo, jwtService) {
+    mailerService;
+    constructor(usersRepo, jwtService, mailerService) {
         this.usersRepo = usersRepo;
         this.jwtService = jwtService;
+        this.mailerService = mailerService;
     }
     async register(dto) {
         if (!dto.email && !dto.phoneNumber) {
@@ -67,6 +71,7 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('Mật khẩu nhập lại không khớp');
         }
         const conditions = [];
+        ;
         if (dto.email)
             conditions.push({ email: dto.email });
         if (dto.phoneNumber)
@@ -110,15 +115,46 @@ let AuthService = class AuthService {
         };
     }
     async forgotPassword(dto) {
-        const { account, newPassword } = dto;
+        const { account } = dto;
         const user = await this.usersRepo.findOne({
             where: [{ email: account }, { phoneNumber: account }]
         });
         if (!user) {
             throw new common_1.NotFoundException('Không tìm thấy tài khoản với thông tin này');
         }
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword;
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const expireTime = new Date();
+        expireTime.setMinutes(expireTime.getMinutes() + 15);
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = expireTime;
+        await this.usersRepo.save(user);
+        const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: 'Yêu cầu khôi phục mật khẩu SmartBudget',
+            html: `
+        <h3>Xin chào!</h3>
+        <p>Bạn vừa yêu cầu đặt lại mật khẩu. Vui lòng click vào link bên dưới để đổi mật khẩu mới:</p>
+        <a href="${resetLink}" target="_blank">Đổi mật khẩu ngay</a>
+        <p>Link này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+      `,
+        });
+        return { message: 'Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư.' };
+    }
+    async resetPassword(token, newPassword) {
+        const user = await this.usersRepo.findOne({
+            where: { resetPasswordToken: token }
+        });
+        if (!user)
+            throw new common_1.BadRequestException('Mã token không hợp lệ');
+        if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+            throw new common_1.BadRequestException('Mã token đã hết hạn');
+        }
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        user.password = newPassword;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
         await this.usersRepo.save(user);
         return { message: 'Đổi mật khẩu thành công!' };
     }
@@ -134,6 +170,7 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_2.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_1.Repository,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        mailer_1.MailerService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
