@@ -9,27 +9,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InitializeWalletDto = void 0;
+exports.ResetPasswordDto = void 0;
 const class_validator_1 = require("class-validator");
-class InitializeWalletDto {
-    name;
-    balance;
-    categories;
+const swagger_1 = require("@nestjs/swagger");
+class ResetPasswordDto {
+    token;
+    newPassword;
+    confirmNewPassword;
 }
-exports.InitializeWalletDto = InitializeWalletDto;
+exports.ResetPasswordDto = ResetPasswordDto;
 __decorate([
-    (0, class_validator_1.IsNumber)({}, { message: 'Số dư phải là một số' }),
+    (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], InitializeWalletDto.prototype, "name", void 0);
+], ResetPasswordDto.prototype, "token", void 0);
 __decorate([
-    (0, class_validator_1.Min)(0, { message: 'Số dư ban đầu không được âm' }),
-    __metadata("design:type", Number)
-], InitializeWalletDto.prototype, "balance", void 0);
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' }),
+    __metadata("design:type", String)
+], ResetPasswordDto.prototype, "newPassword", void 0);
 __decorate([
-    (0, class_validator_1.IsArray)({}),
-    (0, class_validator_1.IsString)({ each: true }),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Array)
-], InitializeWalletDto.prototype, "categories", void 0);
-//# sourceMappingURL=initialize-wallet.dto.js.map
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], ResetPasswordDto.prototype, "confirmNewPassword", void 0);
+//# sourceMappingURL=reset-password.dto.js.map

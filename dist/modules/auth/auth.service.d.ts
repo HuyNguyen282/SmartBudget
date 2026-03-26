@@ -5,6 +5,8 @@ import { RegisterUserDto } from './dto/requests/register-user.dto';
 import { LoginDto } from './dto/requests/login.dto';
 import { ForgotPasswordDto } from './dto/requests/forgotpassword.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResetPasswordDto } from './dto/requests/reset-password.dto';
+import { ChangePasswordDto } from './dto/requests/change-password.dto';
 export declare class AuthService {
     private usersRepo;
     private jwtService;
@@ -19,7 +21,10 @@ export declare class AuthService {
     forgotPassword(dto: ForgotPasswordDto): Promise<{
         message: string;
     }>;
-    resetPassword(token: string, newPassword: string): Promise<{
+    resetPassword(dto: ResetPasswordDto): Promise<{
+        message: string;
+    }>;
+    changePassword(userId: number, dto: ChangePasswordDto): Promise<{
         message: string;
     }>;
     logout(user: any): Promise<{

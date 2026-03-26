@@ -71,7 +71,6 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('Mật khẩu nhập lại không khớp');
         }
         const conditions = [];
-        ;
         if (dto.email)
             conditions.push({ email: dto.email });
         if (dto.phoneNumber)
@@ -120,7 +119,7 @@ let AuthService = class AuthService {
             where: [{ email: account }, { phoneNumber: account }]
         });
         if (!user) {
-            throw new common_1.NotFoundException('Không tìm thấy tài khoản với thông tin này');
+            throw new common_1.NotFoundException('Không tìm thấy tài khoản');
         }
         const resetToken = crypto.randomBytes(32).toString('hex');
         const expireTime = new Date();
@@ -141,20 +140,37 @@ let AuthService = class AuthService {
         });
         return { message: 'Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư.' };
     }
-    async resetPassword(token, newPassword) {
+    async resetPassword(dto) {
+        const { token, newPassword, confirmNewPassword } = dto;
+        if (newPassword !== confirmNewPassword) {
+            throw new common_1.BadRequestException('Mật khẩu không trùng khớp');
+        }
         const user = await this.usersRepo.findOne({
             where: { resetPasswordToken: token }
         });
-        if (!user)
-            throw new common_1.BadRequestException('Mã token không hợp lệ');
-        if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
-            throw new common_1.BadRequestException('Mã token đã hết hạn');
+        if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+            throw new common_1.BadRequestException('Liên kết đã hết hạn hoặc không còn hiệu lực');
         }
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
-        user.password = newPassword;
+        user.password = await bcrypt.hash(newPassword, 10);
         user.resetPasswordToken = null;
         user.resetPasswordExpires = null;
+        await this.usersRepo.save(user);
+        return { message: 'Cập nhật mật khẩu thành công!' };
+    }
+    async changePassword(userId, dto) {
+        const { oldPassword, newPassword, confirmNewPassword } = dto;
+        if (newPassword !== confirmNewPassword) {
+            throw new common_1.BadRequestException('Hai mật khẩu mới không khớp');
+        }
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('Không tìm thấy tài khoản người dùng');
+        }
+        const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+        if (!isPasswordValid) {
+            throw new common_1.BadRequestException('Mật khẩu cũ không chính xác');
+        }
+        user.password = await bcrypt.hash(newPassword, 10);
         await this.usersRepo.save(user);
         return { message: 'Đổi mật khẩu thành công!' };
     }

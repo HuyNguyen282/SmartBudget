@@ -23,13 +23,21 @@ let WalletService = class WalletService {
         this.walletRepository = walletRepository;
     }
     async initializeWallet(userId, dto) {
-        const { balance } = dto;
+        const { name, balance } = dto;
         if (balance < 0) {
-            throw new common_1.BadRequestException('Số tiền không hợp lệ (phải là số dương)');
+            throw new common_1.BadRequestException('Số tiền không hợp lệ');
+        }
+        const existingWallet = await this.walletRepository.findOne({
+            where: { userId: userId }
+        });
+        if (existingWallet) {
+            throw new common_1.BadRequestException('Tài khoản này đã được khởi tạo trước đó');
         }
         try {
             const wallet = this.walletRepository.create({
-                balance,
+                name: name,
+                balance: balance,
+                userId: userId,
                 status: 'active',
             });
             await this.walletRepository.save(wallet);

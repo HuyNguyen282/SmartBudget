@@ -1,15 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity('wallets')
 export class Wallet {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ default: 0 })
-    balance: number;
+  @Column()
+  userId: number;
 
-    @Column({ default: 'inactive' })
-    status: string;
+  @Column({ type: 'varchar', length: 255 })
+  name: string;
+
+  @Column({ default: 0 })
+  balance: number;
+  
+
+  @Column({ default: 'inactive' })
+  status: string;
 
 }

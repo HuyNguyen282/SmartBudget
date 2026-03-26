@@ -18,6 +18,8 @@ const auth_service_1 = require("./auth.service");
 const register_user_dto_1 = require("./dto/requests/register-user.dto");
 const login_dto_1 = require("./dto/requests/login.dto");
 const forgotpassword_dto_1 = require("./dto/requests/forgotpassword.dto");
+const change_password_dto_1 = require("./dto/requests/change-password.dto");
+const reset_password_dto_1 = require("./dto/requests/reset-password.dto");
 const jwt_auth_guard_1 = require("./jwt-auth.guard");
 const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
@@ -34,8 +36,12 @@ let AuthController = class AuthController {
     async forgotPassword(dto) {
         return this.authService.forgotPassword(dto);
     }
-    resetPassword(token, newPassword) {
-        return this.authService.resetPassword(token, newPassword);
+    async resetPassword(dto) {
+        return this.authService.resetPassword(dto);
+    }
+    async changePassword(dto, req) {
+        const userId = req.user.id;
+        return this.authService.changePassword(userId, dto);
     }
     async logout(req) {
         return this.authService.logout(req.user);
@@ -58,7 +64,7 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Post)('forgot-password'),
-    (0, swagger_1.ApiOperation)({ summary: 'Gửi yêu cầu khôi phục mật khẩu (quên mật khẩu)' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Quên mật khẩu' }),
     (0, swagger_1.ApiBody)({ type: forgotpassword_dto_1.ForgotPasswordDto }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -68,12 +74,23 @@ __decorate([
 __decorate([
     (0, common_1.Post)('reset-password'),
     (0, swagger_1.ApiOperation)({ summary: 'Đặt lại mật khẩu mới bằng Token' }),
-    __param(0, (0, common_1.Body)('token')),
-    __param(1, (0, common_1.Body)('newPassword')),
+    (0, swagger_1.ApiBody)({ type: reset_password_dto_1.ResetPasswordDto }),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [reset_password_dto_1.ResetPasswordDto]),
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.Post)('change-password'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'Đổi mật khẩu' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [change_password_dto_1.ChangePasswordDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "changePassword", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('logout'),

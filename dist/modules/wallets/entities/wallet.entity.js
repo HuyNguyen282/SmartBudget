@@ -13,6 +13,8 @@ exports.Wallet = void 0;
 const typeorm_1 = require("typeorm");
 let Wallet = class Wallet {
     id;
+    userId;
+    name;
     balance;
     status;
 };
@@ -21,6 +23,14 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Wallet.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], Wallet.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    __metadata("design:type", String)
+], Wallet.prototype, "name", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 0 }),
     __metadata("design:type", Number)
