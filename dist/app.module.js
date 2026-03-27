@@ -33,7 +33,7 @@ exports.AppModule = AppModule = __decorate([
                     password: config.get('DB_PASS', 'admin'),
                     database: config.get('DB_NAME', 'database'),
                     autoLoadEntities: true,
-                    synchronize: false,
+                    synchronize: true,
                 }),
             }),
             mailer_1.MailerModule.forRootAsync({

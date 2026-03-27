@@ -6,9 +6,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @Column({ unique: true })
-  // username: string;
-
   @Column({ nullable: true, unique: true })
   email?: string;
 
@@ -23,7 +20,7 @@ export class User {
 
   @CreateDateColumn({ name: 'created' })
   createdAt: Date;
-  @Column({ unique: true })
+  @Column({ nullable: true, default: null })
   username: string;
 
   @Column({ type: 'varchar', nullable: true })

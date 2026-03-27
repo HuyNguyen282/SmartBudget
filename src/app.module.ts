@@ -21,7 +21,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         password: config.get<string>('DB_PASS', 'admin'),
         database: config.get<string>('DB_NAME', 'database'),
         autoLoadEntities: true,
-        synchronize: false, 
+        synchronize: true, 
       }),
     }),
     MailerModule.forRootAsync({

@@ -13,16 +13,11 @@ exports.ForgotPasswordDto = void 0;
 const class_validator_1 = require("class-validator");
 class ForgotPasswordDto {
     account;
-    newPassword;
 }
 exports.ForgotPasswordDto = ForgotPasswordDto;
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Vui lòng nhập email hoặc số điện thoại' }),
     __metadata("design:type", String)
 ], ForgotPasswordDto.prototype, "account", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(8, { message: 'Mật khẩu mới phải có ít nhất 8 ký tự' }),
-    __metadata("design:type", String)
-], ForgotPasswordDto.prototype, "newPassword", void 0);
 //# sourceMappingURL=forgotpassword.dto.js.map

@@ -46,8 +46,9 @@ export class AuthController {
     return this.authService.changePassword(userId, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   async logout(@Request() req) {
     return this.authService.logout(req.user);
   }
