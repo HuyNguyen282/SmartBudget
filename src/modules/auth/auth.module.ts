@@ -10,9 +10,9 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule, // <---- enable passport
+    PassportModule, 
     JwtModule.register({
-      secret: process.env.JWT_SECRET || '516b508ace08b91b46ed9b88b9ef0361',
+      secret: 'abc123456', // should be in env variable
       signOptions: { expiresIn: '1h' },
     }),
   ],

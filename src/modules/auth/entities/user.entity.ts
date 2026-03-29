@@ -6,6 +6,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // @Column({ unique: true })
+  // username: string;
+
   @Column({ nullable: true, unique: true })
   email?: string;
 
@@ -20,6 +23,7 @@ export class User {
 
   @CreateDateColumn({ name: 'created' })
   createdAt: Date;
+ // Tìm dòng username
   @Column({ nullable: true, default: null })
   username: string;
 

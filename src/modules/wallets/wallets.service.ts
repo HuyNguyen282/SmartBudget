@@ -12,28 +12,20 @@ export class WalletService {
   ) {}
 
   async initializeWallet(userId: number, dto: InitializeWalletDto) {
-    const { name, balance } = dto;
+    const { balance } = dto;
 
     if (balance < 0) {
       throw new BadRequestException(
-        'Số tiền không hợp lệ',
+        'Số tiền không hợp lệ (phải là số dương)',
       );
     }
 
-    const existingWallet = await this.walletRepository.findOne({
-      where: { userId: userId }
-    });
     
-    if (existingWallet) {
-      throw new BadRequestException('Tài khoản này đã được khởi tạo trước đó');
-    }
-
     try {
       const wallet = this.walletRepository.create({
-        name: name,
-        balance: balance,
-        userId: userId,
+        balance,
         status: 'active', 
+        
       });
 
       await this.walletRepository.save(wallet);

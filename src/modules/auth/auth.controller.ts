@@ -1,17 +1,16 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Headers, Req, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import type { Request } from 'express';
 import { RegisterUserDto } from './dto/requests/register-user.dto';
 import { LoginDto } from './dto/requests/login.dto';
-import {ForgotPasswordDto} from './dto/requests/forgotpassword.dto';
-import {ChangePasswordDto} from './dto/requests/change-password.dto'
-import {ResetPasswordDto} from './dto/requests/reset-password.dto';
+import { ForgotPasswordDto } from './dto/requests/forgotpassword.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { ApiOperation, ApiBody, ApiBearerAuth} from '@nestjs/swagger';
-
-
+import { ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ChangePasswordDto } from './dto/requests/change-password.dto';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('register')
   async register(@Body() dto: RegisterUserDto) {
@@ -24,33 +23,43 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  @ApiOperation({ summary: 'Quên mật khẩu' })
-  @ApiBody({ type: ForgotPasswordDto }) 
+  @ApiOperation({ summary: 'Gửi yêu cầu khôi phục mật khẩu (quên mật khẩu)' })
+  @ApiBody({ type: ForgotPasswordDto })
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
 
-  @Post('reset-password')
-  @ApiOperation({ summary: 'Đặt lại mật khẩu mới bằng Token' })
-  @ApiBody({ type: ResetPasswordDto })
-  async resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto);
-  }
-
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('change-password')
-  @ApiBearerAuth() 
-  @UseGuards(JwtAuthGuard) 
   @ApiOperation({ summary: 'Đổi mật khẩu' })
-  async changePassword(@Body() dto: ChangePasswordDto, @Request() req: any) {
-    const userId = req.user.id; 
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(@Body() dto: ChangePasswordDto, @Req() req: any) {
+    
+    // Đã sửa thành req.user.userId để khớp 100% với file jwt.strategy.ts
+    const userId = req.user.userId; 
+
+    if (!userId) {
+      throw new BadRequestException('Token không hợp lệ hoặc thiếu thông tin người dùng.');
+    }
+
     return this.authService.changePassword(userId, dto);
   }
-
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Đặt lại mật khẩu mới ' })
+  resetPassword(
+    @Body('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    return this.authService.resetPassword(token, newPassword);
+  }
+  @UseGuards(JwtAuthGuard) 
+  @ApiBearerAuth()        
   @Post('logout')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  async logout(@Request() req) {
+  async logout(@Req() req: any) {
+    console.log('>>> LOGOUT HIT, User data:', req.user);
+
+
     return this.authService.logout(req.user);
   }
 }
-

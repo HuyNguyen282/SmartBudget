@@ -10,13 +10,24 @@ async function bootstrap() {
     .setTitle('SmartBudget API')
     .setDescription('Tài liệu API cho hệ thống Smart Spending Management')
     .setVersion('1.0')
-    .addBearerAuth() 
+    .addBearerAuth() // Thêm nút gắn Token JWT để test API bảo mật
     .build();
+  const document = SwaggerModule.createDocument(app, config);
+  app.enableCors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"], // Các phương thức HTTP được phép
+    credentials: true
+  }); // Cho phép CORS nếu frontend và backend chạy trên các domain khác nhau
 
-    const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); 
+
+  // 'api' ở đây là đường dẫn để bạn truy cập (ví dụ: localhost:3000/api)
+  SwaggerModule.setup('api', app, document);
+  // --- KẾT THÚC SETUP SWAGGER ---
   const configService = app.get(ConfigService);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(5000);
 }
 bootstrap();
