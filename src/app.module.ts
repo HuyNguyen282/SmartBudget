@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
       }),
     }),
     AuthModule,
-    WalletsModule
+    WalletsModule,
+    TransactionsModule
   ],
 })
 export class AppModule {}

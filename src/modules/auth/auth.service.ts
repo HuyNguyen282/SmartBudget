@@ -10,10 +10,14 @@ import { LoginDto } from './dto/requests/login.dto';
 import { ForgotPasswordDto } from './dto/requests/forgotpassword.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordDto } from './dto/requests/change-password.dto';
+<<<<<<< HEAD
+=======
+import {ResetPasswordDto} from './dto/requests/reset-password.dto'
+>>>>>>> cb8888e7 (update)
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private usersRepo: Repository<User>,
+    @InjectRepository(User) private usersRepo: Repository<User>, 
     private jwtService: JwtService,
     private mailerService: MailerService,
   ) { }
@@ -139,7 +143,11 @@ export class AuthService {
   }
 async changePassword(userId: number, dto: ChangePasswordDto) {
     // 1. Kiểm tra mật khẩu xác nhận
+<<<<<<< HEAD
     if (dto.newPassword !== dto.confirmPassword) {
+=======
+    if (dto.newPassword !== dto.confirmNewPassword) {
+>>>>>>> cb8888e7 (update)
       throw new BadRequestException('Mật khẩu xác nhận không khớp');
     }
 
@@ -175,4 +183,8 @@ async changePassword(userId: number, dto: ChangePasswordDto) {
     }
     return { message: 'Logged out successfully' };
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> cb8888e7 (update)
