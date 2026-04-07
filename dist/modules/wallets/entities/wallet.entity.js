@@ -45,6 +45,6 @@ __decorate([
     __metadata("design:type", Array)
 ], Wallet.prototype, "categories", void 0);
 exports.Wallet = Wallet = __decorate([
-    (0, typeorm_1.Entity)()
+    (0, typeorm_1.Entity)('wallets')
 ], Wallet);
 //# sourceMappingURL=wallet.entity.js.map

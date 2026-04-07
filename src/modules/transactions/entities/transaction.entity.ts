@@ -23,7 +23,7 @@ export class Transaction {
   @Column({ name: 'user_id' })
   userId: number;
 
-  @Column({ type: 'date', name: 'transaction_date' })
+  @Column({ type: 'datetime', name: 'transaction_date' })
   transactionDate: string;
 
   @Column({ type: 'text', nullable: true })

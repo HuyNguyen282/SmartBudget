@@ -10,10 +10,7 @@ import { LoginDto } from './dto/requests/login.dto';
 import { ForgotPasswordDto } from './dto/requests/forgotpassword.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordDto } from './dto/requests/change-password.dto';
-<<<<<<< HEAD
-=======
 import {ResetPasswordDto} from './dto/requests/reset-password.dto'
->>>>>>> cb8888e7 (update)
 @Injectable()
 export class AuthService {
   constructor(
@@ -93,7 +90,7 @@ export class AuthService {
 
     const resetToken = crypto.randomBytes(32).toString('hex');
     const expireTime = new Date();
-    expireTime.setMinutes(expireTime.getMinutes() + 15); // 15 minutes
+    expireTime.setMinutes(expireTime.getMinutes() + 3); // 3 minutes
 
 
     user.resetPasswordToken = resetToken;
@@ -111,43 +108,38 @@ export class AuthService {
         <h3>Xin chào!</h3>
         <p>Bạn vừa yêu cầu đặt lại mật khẩu. Vui lòng click vào link bên dưới để đổi mật khẩu mới:</p>
         <a href="${resetLink}" target="_blank">Đổi mật khẩu ngay</a>
-        <p>Link này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+        <p>Link này sẽ hết hạn sau 3 phút. Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
       `,
     });
 
     return { message: 'Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư.' };
   }
 
-  async resetPassword(token: string, newPassword: string) {
-    const user = await this.usersRepo.findOne({
-      where: { resetPasswordToken: token }
-    });
+  async resetPassword(dto: ResetPasswordDto) {
+    const { token, newPassword, confirmNewPassword } = dto;
 
-    if (!user) throw new BadRequestException('Mã token không hợp lệ');
-    if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
-      throw new BadRequestException('Mã token đã hết hạn');
+    if (newPassword !== confirmNewPassword) {
+      throw new BadRequestException('Mật khẩu không trùng khớp');
     }
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
+    const user = await this.usersRepo.findOne({ 
+      where: { resetPasswordToken: token } 
+    });
 
+    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException('Liên kết đã hết hạn hoặc không còn hiệu lực');
+    }
 
-
-
-    // Xóa token đi để không dùng lại được nữa
+    user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
     await this.usersRepo.save(user);
 
-    return { message: 'Đổi mật khẩu thành công!' };
+    return { message: 'Cập nhật mật khẩu thành công!' };
   }
 async changePassword(userId: number, dto: ChangePasswordDto) {
     // 1. Kiểm tra mật khẩu xác nhận
-<<<<<<< HEAD
-    if (dto.newPassword !== dto.confirmPassword) {
-=======
     if (dto.newPassword !== dto.confirmNewPassword) {
->>>>>>> cb8888e7 (update)
       throw new BadRequestException('Mật khẩu xác nhận không khớp');
     }
 
@@ -183,8 +175,4 @@ async changePassword(userId: number, dto: ChangePasswordDto) {
     }
     return { message: 'Logged out successfully' };
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> cb8888e7 (update)

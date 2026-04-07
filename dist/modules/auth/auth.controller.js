@@ -48,7 +48,6 @@ let AuthController = class AuthController {
         return this.authService.resetPassword(dto);
     }
     async logout(req) {
-        console.log('>>> LOGOUT HIT, User data:', req.user);
         return this.authService.logout(req.user);
     }
 };

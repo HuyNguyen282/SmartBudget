@@ -124,7 +124,7 @@ let AuthService = class AuthService {
         }
         const resetToken = crypto.randomBytes(32).toString('hex');
         const expireTime = new Date();
-        expireTime.setMinutes(expireTime.getMinutes() + 15);
+        expireTime.setMinutes(expireTime.getMinutes() + 3);
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = expireTime;
         await this.usersRepo.save(user);
@@ -136,7 +136,7 @@ let AuthService = class AuthService {
         <h3>Xin chào!</h3>
         <p>Bạn vừa yêu cầu đặt lại mật khẩu. Vui lòng click vào link bên dưới để đổi mật khẩu mới:</p>
         <a href="${resetLink}" target="_blank">Đổi mật khẩu ngay</a>
-        <p>Link này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+        <p>Link này sẽ hết hạn sau 3 phút. Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
       `,
         });
         return { message: 'Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư.' };

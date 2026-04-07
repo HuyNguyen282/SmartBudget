@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
@@ -14,29 +14,16 @@ export class WalletService {
   ) {}
 
   async initializeWallet(userId: number, dto: InitializeWalletDto) {
-<<<<<<< HEAD
-    const { balance } = dto;
+    const { name, balance, type, categories } = dto;
 
-    if (balance < 0) {
-      throw new BadRequestException(
-        'Số tiền không hợp lệ (phải là số dương)',
-      );
-=======
-    const { name, balance, type, categories} = dto;
-
-    if (balance < 0) {
-      throw new BadRequestException('Số tiền không hợp lệ');
->>>>>>> cb8888e7 (update)
+    if (balance === undefined || balance < 0) {
+      throw new BadRequestException('Số tiền khởi tạo không hợp lệ hoặc bị bỏ trống');
     }
 
+    const existingWallet = await this.walletRepository.findOne({
+      where: { userId: userId }
+    });
     
-<<<<<<< HEAD
-    try {
-      const wallet = this.walletRepository.create({
-        balance,
-        status: 'active', 
-        
-=======
     if (existingWallet) {
       throw new BadRequestException('Tài khoản này đã được khởi tạo trước đó');
     }
@@ -45,15 +32,13 @@ export class WalletService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-
     try {
       const wallet = queryRunner.manager.create(Wallet, {
         name: name,
         balance: balance,
         type: type,
-        categories: categories,
+        categories: categories || [],
         userId: userId,
->>>>>>> cb8888e7 (update)
       });
 
       await queryRunner.manager.save(wallet);
@@ -61,26 +46,30 @@ export class WalletService {
       if (balance > 0) {
         const initialTransaction = queryRunner.manager.create(Transaction, {
           amount: balance,
-          budgetId: wallet.id, 
+          walletId: wallet.id, 
           userId: userId,
           transactionDate: new Date().toISOString().split('T')[0],
           note: 'Khởi tạo số dư ban đầu',
-          type: 'income', // Là khoản tiền được cộng vào
-          categoryId: 0, // Danh mục mặc định
+          type: 'income', 
+          categoryId: 0, 
         });
         await queryRunner.manager.save(initialTransaction);
       }
 
-      // Lưu thành công cả Ví và Giao dịch vào Database
       await queryRunner.commitTransaction();
       return {
         message: 'Khởi tạo số dư thành công',
         wallet,
       };
     } catch (error) {
+      console.log('LỖI DATABASE LÀ:', error);
       await queryRunner.rollbackTransaction();
-      throw new Error('Không thể lưu dữ liệu. Vui lòng kiểm tra kết nối và thử lại');
-    } finally {
+      
+      throw new InternalServerErrorException({
+        message: 'Lỗi thực sự của Database:',
+        detail: error.message,
+    });
+  } finally {
       await queryRunner.release();
     }
   }

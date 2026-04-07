@@ -65,7 +65,7 @@ export class TransactionsService {
     try {
       // 1. Tìm giao dịch cũ trong database
       const oldTransaction = await queryRunner.manager.findOne(Transaction, {
-        where: { id: transactionId, userId: userId },
+        where: { id: transactionId },
       });
 
       if (!oldTransaction) {
@@ -73,7 +73,7 @@ export class TransactionsService {
       }
 
       const wallet = await queryRunner.manager.findOne(Wallet, {
-        where: { id: oldTransaction.walletId, userId: userId },
+        where: { id: oldTransaction.walletId },
       });
 
       if (!wallet) {
@@ -90,7 +90,6 @@ export class TransactionsService {
       queryRunner.manager.merge(Transaction, oldTransaction, dto);
       await queryRunner.manager.save(oldTransaction);
 
-      // Lưu thành công toàn bộ
       await queryRunner.commitTransaction();
 
       return {
@@ -117,7 +116,7 @@ export class TransactionsService {
     await queryRunner.startTransaction();
 
     try {
-      //Truy xuất số tiền của giao dịch này
+      //Truy xuất số tiền của giao dịch 
       const transaction = await queryRunner.manager.findOne(Transaction, {
         where: { id: transactionId, userId: userId },
       });

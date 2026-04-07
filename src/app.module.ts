@@ -5,7 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TransactionsModule } from './modules/transactions/transactions.module';
-
+// import { DashboardModule } from './dashboard/dashboard.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,8 +22,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
         password: config.get<string>('DB_PASS', 'admin'),
         database: config.get<string>('DB_NAME', 'database'),
         autoLoadEntities: true,
-        synchronize: true,
-
+        synchronize: true, 
       }),
     }),
     MailerModule.forRootAsync({

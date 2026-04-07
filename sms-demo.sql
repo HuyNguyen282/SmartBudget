@@ -3,42 +3,48 @@ CREATE DATABASE `sms_demo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb
 use sms_demo;
 
 -- Users table (system authentication & authorization)
-CREATE TABLE user (
-    id INT PRIMARY KEY,
-    username VARCHAR(36) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(36) UNIQUE,
+    phone_number VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    reset_token VARCHAR(6),
-    reset_token_expire DATETIME
+    password VARCHAR(255) NOT NULL,
+    resetPasswordToken VARCHAR(255),
+    resetPasswordExpires TIMESTAMP
 );
-drop table user;
-select * from user;
+drop table users;
+select * from users;
 
-CREATE TABLE budgets (
-    budget_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    budget_name VARCHAR(100) NOT NULL,
-    amount BIGINT NOT NULL,
-    note VARCHAR(50),
-    start_date DATE DEFAULT (CURRENT_DATE),
-    end_date DATE,
+CREATE TABLE wallets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL DEFAULT 'Sổ chi tiêu cá nhân',
+    balance DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+    type VARCHAR(100) NOT NULL,
+    categories TEXT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user(id)
-);
-drop table budgets;
-select * from budgets;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+drop table wallets;
+select * from wallets;
 
 CREATE TABLE transactions (
-    transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    amount DECIMAL(12, 2) NOT NULL,
+    category_id INT NOT NULL,
+    budget_id INT NOT NULL,
     user_id INT NOT NULL,
-    budget_id INT NULL,
-    transaction_name VARCHAR(36),
-    type ENUM('income','expense') NOT NULL DEFAULT 'expense',
-    date DATE DEFAULT (CURRENT_DATE),
-    amount BIGINT NOT NULL,
-    note VARCHAR(50),
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (budget_id) REFERENCES budgets(budget_id) ON DELETE CASCADE
-);
+    transaction_date DATE NOT NULL,
+    note TEXT DEFAULT NULL,
+    type VARCHAR(20) DEFAULT 'expense',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    --  Liên kết budget_id với id của bảng wallets
+    CONSTRAINT fk_transaction_wallet
+    FOREIGN KEY (budget_id) REFERENCES wallets(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 drop table transactions;
 select * from transactions;

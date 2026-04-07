@@ -1,23 +1,8 @@
-<<<<<<< HEAD
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-=======
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Transaction } from '../../transactions/entities/transaction.entity';
->>>>>>> cb8888e7 (update)
 
-@Entity()
+@Entity('wallets')
 export class Wallet {
-<<<<<<< HEAD
-
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column({ default: 0 })
-    balance: number;
-
-    @Column({ default: 'inactive' })
-    status: string;
-=======
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -32,7 +17,6 @@ export class Wallet {
 
   @Column()
   type: string;
->>>>>>> cb8888e7 (update)
 
   @Column('simple-array')
   categories: string[];

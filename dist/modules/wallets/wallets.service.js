@@ -27,8 +27,8 @@ let WalletService = class WalletService {
     }
     async initializeWallet(userId, dto) {
         const { name, balance, type, categories } = dto;
-        if (balance < 0) {
-            throw new common_1.BadRequestException('Số tiền không hợp lệ');
+        if (balance === undefined || balance < 0) {
+            throw new common_1.BadRequestException('Số tiền khởi tạo không hợp lệ hoặc bị bỏ trống');
         }
         const existingWallet = await this.walletRepository.findOne({
             where: { userId: userId }
@@ -44,14 +44,14 @@ let WalletService = class WalletService {
                 name: name,
                 balance: balance,
                 type: type,
-                categories: categories,
+                categories: categories || [],
                 userId: userId,
             });
             await queryRunner.manager.save(wallet);
             if (balance > 0) {
                 const initialTransaction = queryRunner.manager.create(transaction_entity_1.Transaction, {
                     amount: balance,
-                    budgetId: wallet.id,
+                    walletId: wallet.id,
                     userId: userId,
                     transactionDate: new Date().toISOString().split('T')[0],
                     note: 'Khởi tạo số dư ban đầu',
@@ -67,8 +67,12 @@ let WalletService = class WalletService {
             };
         }
         catch (error) {
+            console.log('LỖI DATABASE LÀ:', error);
             await queryRunner.rollbackTransaction();
-            throw new Error('Không thể lưu dữ liệu. Vui lòng kiểm tra kết nối và thử lại');
+            throw new common_1.InternalServerErrorException({
+                message: 'Lỗi thực sự của Database:',
+                detail: error.message,
+            });
         }
         finally {
             await queryRunner.release();
