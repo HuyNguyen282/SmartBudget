@@ -1,21 +1,42 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource } from 'typeorm'; 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
-import { Wallet } from '../wallets/entities/wallet.entity'; 
+import { Category } from '../category/entities/category.entity';
+import { Wallet } from '../wallets/entities/wallet.entity';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(Transaction)
+    private transactionRepo: Repository<Transaction>,
+    @InjectRepository(Category) 
+    private categoryRepo: Repository<Category>,
+    private dataSource: DataSource) {}
 
-  async createTransaction(userId: number, dto: CreateTransactionDto) {
-
+    async createTransaction(userId: number, dto: CreateTransactionDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      let categoryId : number | undefined = undefined;;
+
+      
+      if (dto.categoryName) {
+        const category = await queryRunner.manager.findOne(Category, {
+          where: { name: dto.categoryName }
+        });
+
+        if (!category) {
+          throw new NotFoundException(`Không tìm thấy danh mục: ${dto.categoryName}`);
+        }
+        categoryId = category.id; 
+      }
+
       const wallet = await queryRunner.manager.findOne(Wallet, {
         where: { userId: userId},
       });
@@ -27,12 +48,12 @@ export class TransactionsService {
       // 2. Tạo giao dịch mới
       const newTransaction = queryRunner.manager.create(Transaction, {
         amount: dto.amount,
-        categoryId: dto.categoryId,
+        categoryId: categoryId, 
         transactionDate: dto.transactionDate,
         note: dto.note,
         userId: userId, 
         walletId: wallet.id, 
-        type: 'expense', // Mặc định đây là khoản chi tiêu
+        type: 'expense', 
       });
       
       await queryRunner.manager.save(newTransaction);
@@ -63,7 +84,6 @@ export class TransactionsService {
     await queryRunner.startTransaction();
 
     try {
-      // 1. Tìm giao dịch cũ trong database
       const oldTransaction = await queryRunner.manager.findOne(Transaction, {
         where: { id: transactionId },
       });
@@ -80,13 +100,25 @@ export class TransactionsService {
         throw new NotFoundException('Không tìm thấy dữ liệu ngân sách');
       }
 
-      if (dto.amount !== oldTransaction.amount) {
-        // Hoàn lại tiền cũ vào ví, sau đó trừ đi tiền mới
+      if (dto.amount !== undefined && dto.amount !== oldTransaction.amount) {
+
         wallet.balance = Number(wallet.balance) + Number(oldTransaction.amount) - Number(dto.amount);
         await queryRunner.manager.save(wallet);
       }
 
-      // 4. Cập nhật thông tin giao dịch 
+      if (dto.categoryName) {
+        const category = await queryRunner.manager.findOne(Category, {
+          where: { name: dto.categoryName }
+        });
+
+        if (!category) {
+          throw new NotFoundException(`Không tìm thấy danh mục: ${dto.categoryName}`);
+        }
+
+        oldTransaction.categoryId = category.id; 
+      }
+      // --------------------------------------------------------------
+
       queryRunner.manager.merge(Transaction, oldTransaction, dto);
       await queryRunner.manager.save(oldTransaction);
 

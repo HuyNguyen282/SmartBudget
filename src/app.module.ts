@@ -6,6 +6,8 @@ import { WalletsModule } from './modules/wallets/wallets.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 // import { DashboardModule } from './dashboard/dashboard.module';
+import { GoalModule } from './modules/goal/goal.module';
+import { CategoryModule } from './modules/category/category.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,7 +44,9 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     }),
     AuthModule,
     WalletsModule,
-    TransactionsModule
+    TransactionsModule,
+    GoalModule,
+    CategoryModule
   ],
 })
 export class AppModule {}

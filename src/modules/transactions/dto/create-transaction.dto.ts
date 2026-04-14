@@ -5,9 +5,9 @@ export class CreateTransactionDto {
   @Min(1, { message: 'Số tiền phải phải là số dương' })
   amount: number;
 
-  @IsNumber()
-  @IsNotEmpty({ message: 'Vui lòng chọn danh mục' })
-  categoryId: number;
+  @IsOptional()
+  @IsString()
+  categoryName: string;
 
   @IsDateString({}, { message: 'Định dạng thời gian không hợp lệ' })
   @IsNotEmpty({ message: 'Vui lòng chọn thời gian giao dịch' })
@@ -17,3 +17,5 @@ export class CreateTransactionDto {
   @IsString()
   note?: string;
 }
+
+

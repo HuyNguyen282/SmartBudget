@@ -15,6 +15,7 @@ CREATE TABLE users (
 drop table users;
 select * from users;
 
+
 CREATE TABLE wallets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -28,23 +29,56 @@ CREATE TABLE wallets (
 drop table wallets;
 select * from wallets;
 
+
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    type VARCHAR(50) DEFAULT 'expense',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+drop table categories;
+select * from categories;
+INSERT INTO categories (name, type) VALUES
+('Ăn uống', 'expense'),
+('Di chuyển', 'expense'),
+('Mua sắm', 'expense'),
+('Tiền nhà', 'expense'),
+('Lương', 'income');
+
+
 CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(12, 2) NOT NULL,
-    category_id INT NOT NULL,
-    budget_id INT NOT NULL,
+    category_id INT DEFAULT NULL,
+    wallet_id INT NOT NULL,
     user_id INT NOT NULL,
-    transaction_date DATE NOT NULL,
+    transaction_date DATETIME NOT NULL,
     note TEXT DEFAULT NULL,
     type VARCHAR(20) DEFAULT 'expense',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    --  Liên kết budget_id với id của bảng wallets
+    -- Cập nhật lại tên cột trong khóa ngoại
     CONSTRAINT fk_transaction_wallet
-    FOREIGN KEY (budget_id) REFERENCES wallets(id)
+    FOREIGN KEY (wallet_id) REFERENCES wallets(id)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 drop table transactions;
 select * from transactions;
+
+
+CREATE TABLE goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    category_id INT NOT NULL,
+    amount DECIMAL(12, 2) NOT NULL,
+    cycle VARCHAR(50) NOT NULL, -- Lưu chu kỳ
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+drop table goals;
+select * from goals;

@@ -14,6 +14,8 @@ const auth_module_1 = require("./modules/auth/auth.module");
 const wallets_module_1 = require("./modules/wallets/wallets.module");
 const mailer_1 = require("@nestjs-modules/mailer");
 const transactions_module_1 = require("./modules/transactions/transactions.module");
+const goal_module_1 = require("./modules/goal/goal.module");
+const category_module_1 = require("./modules/category/category.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -54,7 +56,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             wallets_module_1.WalletsModule,
-            transactions_module_1.TransactionsModule
+            transactions_module_1.TransactionsModule,
+            goal_module_1.GoalModule,
+            category_module_1.CategoryModule
         ],
     })
 ], AppModule);

@@ -14,7 +14,7 @@ export class Transaction {
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   amount: number;
 
-  @Column({ name: 'category_id' })
+  @Column({ name: 'category_id', nullable: true })
   categoryId: number;
 
   @Column({ name: 'wallet_id' })
