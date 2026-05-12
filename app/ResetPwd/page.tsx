@@ -3,11 +3,16 @@ import { useState } from "react"
 import "./ResetPwd.css"
 import Link from "next/link"
 import api from "@/lib/axios"
+<<<<<<< HEAD
 import { useSearchParams } from "next/navigation"
 
 export default function ResetPwd() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token") 
+=======
+
+export default function ResetPwd() {
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   const [showNew, setShowNew] = useState(false)        // ← đổi tên cho đúng
   const [showConfirm, setShowConfirm] = useState(false)
   const [newPassword, setNewPassword] = useState("")

@@ -6,7 +6,10 @@ import Header from "@/app/components/Header";
 import { Goal } from "@/app/types";
 import { Target, Pencil, Trash2, Plus, Calendar } from "lucide-react";
 import GoalModal from "@/app/components/GoalModal";
+<<<<<<< HEAD
 import { getFinancialGoals, deleteFinancialGoal } from "@/lib/api";
+=======
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 
 function formatVND(v: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -20,6 +23,7 @@ function calcPercent(current: number, target: number) {
 }
 
 const SUGGESTIONS = [
+<<<<<<< HEAD
   { label: "Quỹ khẩn cấp",      desc: "Tiết kiệm cho 3-6 tháng sinh hoạt"   },
   { label: "Mua xe mới",         desc: "Lên kế hoạch cho phương tiện đi lại" },
   { label: "Du lịch nghỉ dưỡng", desc: "Chuẩn bị cho chuyến đi trong mơ"    },
@@ -30,6 +34,18 @@ export default function GoalsPage() {
   const [loading,   setLoading]   = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editGoal,  setEditGoal]  = useState<Goal | null>(null);
+=======
+  { label: "Quỹ khẩn cấp",     desc: "Tiết kiệm cho 3-6 tháng sinh hoạt" },
+  { label: "Mua xe mới",        desc: "Lên kế hoạch cho phương tiện đi lại" },
+  { label: "Du lịch nghỉ dưỡng",desc: "Chuẩn bị cho chuyến đi trong mơ" },
+];
+
+export default function GoalsPage() {
+  const [goals, setGoals]         = useState<Goal[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editGoal, setEditGoal]   = useState<Goal | null>(null);
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => { fetchGoals(); }, []);
@@ -37,6 +53,7 @@ export default function GoalsPage() {
   async function fetchGoals() {
     setLoading(true);
     try {
+<<<<<<< HEAD
       const data = await getFinancialGoals();
       const mapped: Goal[] = data.map((g: any) => ({
         id:            g.id,
@@ -46,6 +63,12 @@ export default function GoalsPage() {
         deadline:      g.deadline,
       }));
       setGoals(mapped);
+=======
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals`, { credentials: "include" });
+      if (!res.ok) throw new Error();
+      const json = await res.json();
+      setGoals(json ?? []);
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     } catch {
       setGoals([]);
     } finally {
@@ -56,7 +79,13 @@ export default function GoalsPage() {
   async function handleDelete(id: string) {
     if (!confirm("Bạn có chắc muốn xoá mục tiêu này?")) return;
     try {
+<<<<<<< HEAD
       await deleteFinancialGoal(id);
+=======
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${id}`, {
+        method: "DELETE", credentials: "include",
+      });
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
       setGoals((prev) => prev.filter((g) => g.id !== id));
     } catch {
       console.warn("Xoá thất bại");
@@ -85,6 +114,10 @@ export default function GoalsPage() {
         <Header />
         <main className="flex-1 overflow-y-auto p-8">
 
+<<<<<<< HEAD
+=======
+          {/* Tiêu đề */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Mục tiêu tài chính</h1>
@@ -99,6 +132,10 @@ export default function GoalsPage() {
             </button>
           </div>
 
+<<<<<<< HEAD
+=======
+          {/* Content */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {[...Array(3)].map((_, i) => (
@@ -122,6 +159,10 @@ export default function GoalsPage() {
               ))}
             </div>
           ) : goals.length === 0 ? (
+<<<<<<< HEAD
+=======
+            /* Empty state */
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mb-5">
                 <Target className="w-9 h-9 text-[#6C3FC5]" />
@@ -130,6 +171,11 @@ export default function GoalsPage() {
               <p className="text-sm text-gray-400 max-w-sm mb-8 leading-relaxed">
                 Việc đặt mục tiêu cụ thể giúp bạn dễ dàng theo dõi tiến độ tiết kiệm và đạt được những ước mơ tài chính như mua nhà, mua xe hay quỹ dự phòng.
               </p>
+<<<<<<< HEAD
+=======
+
+              {/* Gợi ý */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-8">
                 {SUGGESTIONS.map((s) => (
                   <button
@@ -142,6 +188,10 @@ export default function GoalsPage() {
                   </button>
                 ))}
               </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <button
                 onClick={() => setModalOpen(true)}
                 className="flex items-center gap-2 bg-[#6C3FC5] hover:bg-[#5a33a8] text-white px-7 py-3 rounded-xl text-sm font-semibold transition-colors shadow-md shadow-purple-200"
@@ -151,10 +201,18 @@ export default function GoalsPage() {
               </button>
             </div>
           ) : (
+<<<<<<< HEAD
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {goals.map((goal) => {
                 const percent   = calcPercent(goal.currentAmount, goal.targetAmount);
                 const remain    = Math.max(0, goal.targetAmount - goal.currentAmount);
+=======
+            /* Goal cards */
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              {goals.map((goal) => {
+                const percent  = calcPercent(goal.currentAmount, goal.targetAmount);
+                const remain   = Math.max(0, goal.targetAmount - goal.currentAmount);
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                 const isHovered = hoveredId === goal.id;
                 return (
                   <div
@@ -163,10 +221,18 @@ export default function GoalsPage() {
                     onMouseEnter={() => setHoveredId(goal.id)}
                     onMouseLeave={() => setHoveredId(null)}
                   >
+<<<<<<< HEAD
+=======
+                    {/* Icon + actions */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <div className="flex items-start justify-between mb-4">
                       <div className="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center">
                         <Target className="w-5 h-5 text-[#6C3FC5]" />
                       </div>
+<<<<<<< HEAD
+=======
+                      {/* Actions hiện khi hover */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                       <div className={`flex items-center gap-1 transition-opacity ${isHovered ? "opacity-100" : "opacity-0"}`}>
                         <button
                           onClick={() => handleEdit(goal)}
@@ -183,8 +249,15 @@ export default function GoalsPage() {
                       </div>
                     </div>
 
+<<<<<<< HEAD
                     <h4 className="text-base font-bold text-gray-900 mb-1">{goal.name}</h4>
 
+=======
+                    {/* Tên */}
+                    <h4 className="text-base font-bold text-gray-900 mb-1">{goal.name}</h4>
+
+                    {/* Deadline */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     {goal.deadline && (
                       <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
                         <Calendar className="w-3.5 h-3.5" />
@@ -192,11 +265,19 @@ export default function GoalsPage() {
                       </div>
                     )}
 
+<<<<<<< HEAD
+=======
+                    {/* Số tiền */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <div className="flex items-center justify-between text-sm mb-2">
                       <span className="font-semibold text-gray-800">{formatVND(goal.currentAmount)}</span>
                       <span className="text-gray-400">{formatVND(goal.targetAmount)}</span>
                     </div>
 
+<<<<<<< HEAD
+=======
+                    {/* Progress bar */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-2">
                       <div
                         className="h-full bg-[#6C3FC5] rounded-full transition-all duration-500"
@@ -205,6 +286,10 @@ export default function GoalsPage() {
                     </div>
                     <p className="text-xs text-gray-400 mb-4">{percent}% hoàn thành</p>
 
+<<<<<<< HEAD
+=======
+                    {/* Còn lại */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                       <span className="text-sm text-gray-500">Còn lại:</span>
                       <span className="text-sm font-bold text-[#6C3FC5]">{formatVND(remain)}</span>

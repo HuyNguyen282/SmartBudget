@@ -5,6 +5,7 @@ import Link from "next/link"
 import api from '@/lib/axios'
 
 export default function EnterMail() {
+<<<<<<< HEAD
   const [account, setAccount]   = useState("")
   const [loading, setLoading]   = useState(false)
   const [error,   setError]     = useState("")
@@ -31,12 +32,17 @@ export default function EnterMail() {
       setLoading(false)
     }
   }
+=======
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 
   return (
     <div className="main-container">
       <div className="left-section">
         <h1>Enter your email to reset your password</h1>
 
+<<<<<<< HEAD
         {success ? (
           <div style={{ marginTop: "20px" }}>
             <p style={{ color: "green", fontSize: "15px", marginBottom: "16px" }}>
@@ -78,6 +84,28 @@ export default function EnterMail() {
             </div>
           </form>
         )}
+=======
+        <form>
+          <div className="form-group" 
+            style={{ position: "relative" }}>
+            <input
+              type="email"
+              className="input-custom"
+              placeholder="Enter Your Email"
+            />
+            
+          </div>
+
+          <button type="submit" className="btn-primary">
+            Reset Password
+          </button>
+
+          <div className="login-text">
+            Remember your password?{" "}
+            <Link href="/signin" className="login-link">Login</Link>
+          </div>
+        </form>
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
       </div>
 
       <div className="right-section">

@@ -3,9 +3,15 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Header from "@/app/components/Header";
+<<<<<<< HEAD
 import { Search, Filter, Download, Pencil, Trash2, DollarSign } from "lucide-react";
 import AddTransactionModal, { TransactionFormData } from "@/app/components/Addtransactionmodal";
 import api from "@/lib/axios";
+=======
+import { Transaction } from "@/app/types";
+import { Search, Filter, Download, Pencil, Trash2, DollarSign } from "lucide-react";
+import AddTransactionModal, { TransactionFormData } from "@/app/components/Addtransactionmodal";
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 
 const CAT_COLORS: Record<string, string> = {
   "Ăn uống":   "bg-orange-100 text-orange-600",
@@ -17,10 +23,17 @@ const CAT_COLORS: Record<string, string> = {
 };
 
 const TIME_FILTERS = [
+<<<<<<< HEAD
   { label: "Tất cả thời gian", value: "all"     },
   { label: "Tháng này",        value: "month"   },
   { label: "Quý này",          value: "quarter" },
   { label: "Năm nay",          value: "year"    },
+=======
+  { label: "Tất cả thời gian", value: "all" },
+  { label: "Tháng này",        value: "month" },
+  { label: "Quý này",          value: "quarter" },
+  { label: "Năm nay",          value: "year" },
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 ];
 
 const PAGE_SIZE = 10;
@@ -38,6 +51,7 @@ function formatDate(iso: string) {
 }
 
 export default function TransactionsPage() {
+<<<<<<< HEAD
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading,      setLoading]      = useState(true);
   const [search,       setSearch]       = useState("");
@@ -103,6 +117,55 @@ try {
       setTotal((prev) => prev - 1);
     } catch (err) {
       console.warn("Xoá thất bại:", err);
+=======
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [search, setSearch]             = useState("");
+  const [timeFilter, setTimeFilter]     = useState("all");
+  const [page, setPage]                 = useState(1);
+  const [total, setTotal]               = useState(0);
+  const [modalOpen, setModalOpen]       = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          search, period: timeFilter,
+          page: String(page), limit: String(PAGE_SIZE),
+        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/transactions?${params}`,
+          { credentials: "include" }
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        setTransactions(json.data ?? []);
+        setTotal(json.total ?? 0);
+      } catch (err) {
+        console.warn("Backend chưa sẵn sàng:", err);
+        setTransactions([]);
+        setTotal(0);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [search, timeFilter, page]);
+
+  async function handleSave(data: TransactionFormData) {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error();
+      setPage(1); // trigger refetch
+    } catch {
+      console.warn("Lưu thất bại");
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     }
   }
 
@@ -110,11 +173,14 @@ try {
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to   = Math.min(page * PAGE_SIZE, total);
 
+<<<<<<< HEAD
   // Client-side filter by search
   const filtered = transactions.filter((tx) =>
     !search || tx.note?.toLowerCase().includes(search.toLowerCase())
   );
 
+=======
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   return (
     <div className="flex h-screen bg-[#F4F6FA] font-sans overflow-hidden">
       <Sidebar />
@@ -122,6 +188,10 @@ try {
         <Header />
         <main className="flex-1 overflow-y-auto p-8">
 
+<<<<<<< HEAD
+=======
+          {/* Tiêu đề */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Giao dịch</h1>
@@ -141,6 +211,10 @@ try {
             </div>
           </div>
 
+<<<<<<< HEAD
+=======
+          {/* Card */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
             {/* Search + Filter */}
@@ -175,10 +249,25 @@ try {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-gray-400 text-xs uppercase tracking-wide border-b border-gray-100">
+<<<<<<< HEAD
                     <th className="text-left px-6 py-3 font-semibold">Ngày</th>
                     <th className="text-left px-4 py-3 font-semibold">Ghi chú</th>
                     <th className="text-left px-4 py-3 font-semibold">Danh mục</th>
                     <th className="text-right px-4 py-3 font-semibold">Số tiền</th>
+=======
+                    <th className="text-left px-6 py-3 font-semibold">
+                      <span className="flex items-center gap-1 cursor-pointer hover:text-gray-600">
+                        Ngày <span className="text-gray-300">↕</span>
+                      </span>
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold">Mô tả</th>
+                    <th className="text-left px-4 py-3 font-semibold">Danh mục</th>
+                    <th className="text-right px-4 py-3 font-semibold">
+                      <span className="flex items-center justify-end gap-1 cursor-pointer hover:text-gray-600">
+                        Số tiền <span className="text-gray-300">↕</span>
+                      </span>
+                    </th>
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <th className="text-center px-6 py-3 font-semibold">Hành động</th>
                   </tr>
                 </thead>
@@ -193,7 +282,11 @@ try {
                         <td className="px-6 py-4"><div className="h-7 bg-gray-100 rounded-lg w-20 mx-auto" /></td>
                       </tr>
                     ))
+<<<<<<< HEAD
                   ) : filtered.length === 0 ? (
+=======
+                  ) : transactions.length === 0 ? (
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <tr>
                       <td colSpan={5}>
                         <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
@@ -203,7 +296,11 @@ try {
                           <div>
                             <p className="text-base font-semibold text-gray-700">Chưa có giao dịch nào</p>
                             <p className="text-sm text-gray-400 mt-1 max-w-xs">
+<<<<<<< HEAD
                               Bắt đầu theo dõi thu chi bằng cách thêm giao dịch đầu tiên.
+=======
+                              Bắt đầu theo dõi thu chi bằng cách thêm giao dịch đầu tiên của bạn vào hệ thống.
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                             </p>
                           </div>
                           <button
@@ -217,6 +314,7 @@ try {
                       </td>
                     </tr>
                   ) : (
+<<<<<<< HEAD
                     filtered.map((tx) => {
                       const catColor = CAT_COLORS[tx.category] ?? "bg-gray-100 text-gray-500";
                       return (
@@ -234,16 +332,35 @@ try {
                           </td>
                           <td className="px-4 py-3.5 text-right font-semibold text-red-400">
                             -{formatVND(Math.abs(tx.amount))}
+=======
+                    transactions.map((tx) => {
+                      const catColor = CAT_COLORS[tx.category] ?? "bg-gray-100 text-gray-500";
+                      return (
+                        <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-3.5 text-gray-500 whitespace-nowrap">{formatDate(tx.date)}</td>
+                          <td className="px-4 py-3.5 font-medium text-gray-800">{tx.title}</td>
+                          <td className="px-4 py-3.5">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${catColor}`}>
+                              {tx.category}
+                            </span>
+                          </td>
+                          <td className={`px-4 py-3.5 text-right font-semibold ${tx.type === "income" ? "text-green-500" : "text-red-400"}`}>
+                            {tx.type === "income" ? "+" : "−"}{formatVND(Math.abs(tx.amount))}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                           </td>
                           <td className="px-6 py-3.5">
                             <div className="flex items-center justify-center gap-2">
                               <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
+<<<<<<< HEAD
                               <button
                                 onClick={() => handleDelete(tx.id)}
                                 className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
                               >
+=======
+                              <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -285,6 +402,10 @@ try {
         </main>
       </div>
 
+<<<<<<< HEAD
+=======
+      {/* Modal */}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
       <AddTransactionModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

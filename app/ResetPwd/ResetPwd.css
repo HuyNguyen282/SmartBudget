@@ -7,7 +7,11 @@
 }
 
 body {
+<<<<<<< HEAD
     background-color: #E6D3EC;
+=======
+    background-color: #F6F5FF;
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     min-height: 100vh;
 }
 

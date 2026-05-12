@@ -68,6 +68,7 @@ export interface AiForecast {
 
 // ─── Auth helper ───────────────────────────────────────────────────────────────
 function getToken(): string | null {
+<<<<<<< HEAD
   if(typeof window === "undefined") return null;
   return localStorage.getItem("access_token");
 
@@ -104,6 +105,14 @@ async function refreshAccessToken(): Promise<string> {
 // ─── Core fetch wrapper ────────────────────────────────────────────────────────
 // ─── Core fetch wrapper ────────────────────────────────────────────────────────
 async function req<T>(path: string, options: RequestInit = {}, isRetry = false): Promise<T> {
+=======
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("access_token");
+}
+
+// ─── Core fetch wrapper ────────────────────────────────────────────────────────
+async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -113,6 +122,7 @@ async function req<T>(path: string, options: RequestInit = {}, isRetry = false):
       ...(options.headers ?? {}),
     },
   });
+<<<<<<< HEAD
 
   // Token hết hạn → thử refresh 1 lần
   if (res.status === 401 && !isRetry) {
@@ -125,11 +135,17 @@ async function req<T>(path: string, options: RequestInit = {}, isRetry = false):
     }
   }
 
+=======
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error((err as any).message ?? `Lỗi ${res.status}: ${res.statusText}`);
   }
+<<<<<<< HEAD
 
+=======
+  // 204 No Content
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   if (res.status === 204) return undefined as unknown as T;
   return res.json();
 }

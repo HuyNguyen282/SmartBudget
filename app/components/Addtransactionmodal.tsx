@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState } from "react";
 import { X, DollarSign, Tag, Calendar, Wallet, AlignLeft } from "lucide-react";
 
@@ -21,11 +22,33 @@ export interface TransactionFormData {
   note: string;
 }
 
+=======
+import {useState} from "react";
+import { X, DollarSign, Tag, Calendar, Wallet, AlignLeft } from "lucide-react";
+
+type TransactionType = "income" | "expense" | "transfer";
+
+interface AddTransactionModalProps {
+    open: boolean;
+    onClose: () => void;
+    onSave?: (data: TransactionFormData) => void;
+
+}  
+export interface TransactionFormData {
+    type: TransactionType;
+    amount: number;
+    category: string;
+    date: string;
+    wallet: string;
+    note: string;
+}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 const CATEGORIES: Record<TransactionType, string[]> = {
   expense:  ["Ăn uống", "Di chuyển", "Mua sắm", "Giải trí", "Y tế", "Giáo dục", "Hóa đơn", "Khác"],
   income:   ["Lương", "Thưởng", "Đầu tư", "Freelance", "Quà tặng", "Khác"],
   transfer: [],
 };
+<<<<<<< HEAD
 
 const WALLETS = ["Tiền mặt", "Ngân hàng", "Ví điện tử", "Thẻ tín dụng"];
 
@@ -98,23 +121,101 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
   }
 
   const tabColor = {
+=======
+const WALLETS = ["Tiền mặt", "Thẻ tín dụng", "Ví điện tử", "Tài khoản ngân hàng"];
+
+const TABS: { label: string; value: TransactionType }[] = [
+  { label: "Chi tiêu", value: "expense" },
+  { label: "Thu nhập", value: "income"  },
+];
+
+function today(){
+    return new Date().toISOString().split("T")[0];
+
+}
+export default function AddTransactionModal({ open, onClose, onSave }: AddTransactionModalProps) {
+    const [type, setType] = useState<TransactionType>("expense");
+    const [amount, setAmount] = useState("");
+    const [category, setCategory] = useState("");
+    const [date, setDate] = useState(today());
+    const [wallet, setWallet] = useState("Tiền mặt");
+    const [note, setNote] = useState("");
+    const [saving, setSaving] = useState(false);
+
+    if(!open) return null;
+    
+    function handleTypeChange(t: TransactionType){
+        setType(t);
+        setCategory("");
+    }
+    function handleAmountChange(val: string){
+        // Chỉ cho phép nhập số và dấu phẩy
+        const num = val.replace(/[^0-9,]/g, "");
+        setAmount(num);
+    }
+    function formatDisplay(val: string){
+        if(!val) return "";
+        return new Intl.NumberFormat("vi-VN").format(Number(val));
+    }
+    async function handleSave(){
+        if(!amount || Number(amount) <= 0) return ;
+        setSaving(true);
+        try{
+            await onSave?.({
+                type,
+                amount: Number(amount),
+                category,
+                date,
+                wallet,
+                note,
+
+            });
+            handleClose();
+        }finally{
+            setSaving(false);
+
+        }
+    }
+    function handleClose(){
+        setType("expense");
+        setAmount("");
+        setCategory("");
+        setDate(today());
+        setWallet("Tiền mặt");
+        setNote("");
+        onClose();
+    }
+    const tabColor = {
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     expense:  "bg-white shadow-sm text-gray-900",
     income:   "bg-white shadow-sm text-gray-900",
     transfer: "bg-white shadow-sm text-gray-900",
   };
+<<<<<<< HEAD
 
   return (
+=======
+  return(
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     <>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
         onClick={handleClose}
       />
+<<<<<<< HEAD
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
 
+=======
+ 
+      {/* Modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
             <div className="flex items-center gap-3">
@@ -130,7 +231,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               <X className="w-4 h-4" />
             </button>
           </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           <div className="px-6 py-5 space-y-5">
             {/* Tabs */}
             <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
@@ -148,6 +253,7 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
                 </button>
               ))}
             </div>
+<<<<<<< HEAD
 
             {/* Tên giao dịch */}
             <div>
@@ -161,6 +267,9 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               />
             </div>
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
             {/* Số tiền + Danh mục */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -187,7 +296,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
                   </div>
                 </div>
               </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1.5 block">Danh mục</label>
                 <div className="relative">
@@ -205,7 +318,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
             {/* Ngày + Ví */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -220,7 +337,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
                   />
                 </div>
               </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1.5 block">Ví / Nguồn tiền</label>
                 <div className="relative">
@@ -237,7 +358,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
             {/* Mô tả */}
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1.5 block">Mô tả chi tiết</label>
@@ -253,7 +378,11 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               </div>
             </div>
           </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
             <button
@@ -275,9 +404,17 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               Lưu giao dịch
             </button>
           </div>
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
         </div>
       </div>
     </>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
