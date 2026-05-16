@@ -5,62 +5,44 @@ import Sidebar from "@/app/components/Sidebar";
 import Header from "@/app/components/Header";
 import { Download, PieChart, BarChart2, Calendar, ChevronDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-<<<<<<< HEAD
-import api from "@/lib/axios";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart as RPieChart, Pie, Cell,
 } from "recharts";
+import { getReport } from "@/lib/api";
 
-=======
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Line, LineChart, PieChart as RPieChart,
-  Pie, Cell, Legend,
-} from "recharts";
-
-
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 interface ReportStats {
-  totalIncome:  number;
+  totalIncome: number;
   totalExpense: number;
-  netBalance:   number;
+  netBalance: number;
 }
 
 interface CashFlowPoint {
-  label:   string;
-  income:  number;
+  label: string;
+  income: number;
   expense: number;
 }
 
 interface CategoryItem {
-  name:    string;
-  amount:  number;
+  name: string;
+  amount: number;
   percent: number;
-  color:   string;
+  color: string;
 }
 
 interface ReportData {
-  stats:      ReportStats;
-  cashFlow:   CashFlowPoint[];
+  stats: ReportStats;
+  cashFlow: CashFlowPoint[];
   categories: CategoryItem[];
 }
 
-<<<<<<< HEAD
 const PERIOD_OPTIONS = [
-  { label: "Tháng này",        value: "month"     },
-  { label: "Tháng trước",      value: "lastmonth" },
-  { label: "Tất cả thời gian", value: "all"       },
-=======
-
-const PERIOD_OPTIONS = [
-  { label: "Tháng này",       value: "month"    },
-  { label: "Tháng trước",     value: "lastmonth"},
-  { label: "Tất cả thời gian",value: "all"      },
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
+  { label: "Tháng này", value: "month" },
+  { label: "Tháng trước", value: "lastmonth" },
+  { label: "Tất cả thời gian", value: "all" },
 ];
 
-const CAT_COLORS = ["#EF4444","#3B82F6","#F59E0B","#10B981","#9CA3AF","#8B5CF6","#F97316"];
+const CAT_COLORS = ["#EF4444", "#3B82F6", "#F59E0B", "#10B981", "#9CA3AF", "#8B5CF6", "#F97316"];
 
 function formatVND(v: number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -68,10 +50,6 @@ function formatVND(v: number) {
   }).format(v).replace("₫", "đ");
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
@@ -86,37 +64,21 @@ function CustomTooltip({ active, payload, label }: any) {
   );
 }
 
-<<<<<<< HEAD
 export default function ReportsPage() {
-  const [data,     setData]     = useState<ReportData | null>(null);
-  const [loading,  setLoading]  = useState(true);
-  const [period,   setPeriod]   = useState("month");
-=======
-
-export default function ReportsPage() {
-  const [data, setData]       = useState<ReportData | null>(null);
+  const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod]   = useState("month");
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
+  const [period, setPeriod] = useState("month");
   const [dropdown, setDropdown] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-<<<<<<< HEAD
-        // ← dùng api thay fetch thủ công
-        const { data: json } = await api.get(`/reports?period=${period}`);
-=======
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/reports?period=${period}`,
-          { credentials: "include" }
-        );
-        if (!res.ok) throw new Error();
-        const json = await res.json();
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
+        const json = await getReport(period);
+        console.log("Report data:", json);  // ← thêm đây
         setData(json);
-      } catch {
+      } catch (err) {
+        console.error("Lỗi getReport:", err);  // ← thêm đây
         setData(null);
       } finally {
         setLoading(false);
@@ -125,11 +87,7 @@ export default function ReportsPage() {
     load();
   }, [period]);
 
-<<<<<<< HEAD
-  const isEmpty     = !loading && (!data || data.cashFlow.length === 0);
-=======
   const isEmpty = !loading && (!data || data.cashFlow.length === 0);
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   const periodLabel = PERIOD_OPTIONS.find((p) => p.value === period)?.label ?? "Tháng này";
 
   return (
@@ -148,10 +106,6 @@ export default function ReportsPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-<<<<<<< HEAD
-=======
-              {/* Period dropdown */}
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <div className="relative">
                 <button
                   onClick={() => setDropdown((v) => !v)}
@@ -167,11 +121,10 @@ export default function ReportsPage() {
                       <button
                         key={opt.value}
                         onClick={() => { setPeriod(opt.value); setDropdown(false); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                          period === opt.value
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${period === opt.value
                             ? "bg-purple-50 text-[#6C3FC5] font-medium"
                             : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         {opt.label}
                       </button>
@@ -179,21 +132,13 @@ export default function ReportsPage() {
                   </div>
                 )}
               </div>
-<<<<<<< HEAD
-=======
-              {/* Export */}
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               <button className="w-10 h-10 flex items-center justify-center border border-gray-200 bg-white rounded-xl hover:bg-gray-50 transition-colors">
                 <Download className="w-4 h-4 text-gray-600" />
               </button>
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* Stat cards */}
-=======
-          {/* Stat cards — chỉ hiện khi có data */}
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
           {!isEmpty && !loading && data && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
               <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -231,16 +176,9 @@ export default function ReportsPage() {
           {/* Charts */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-<<<<<<< HEAD
             {/* Cash flow */}
             <div className="xl:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 mb-6">Phân tích dòng tiền</h3>
-=======
-            {/* Cash flow chart */}
-            <div className="xl:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-              <h3 className="text-base font-bold text-gray-900 mb-6">Phân tích dòng tiền</h3>
-
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               {loading ? (
                 <div className="h-64 flex items-center justify-center">
                   <div className="w-8 h-8 border-2 border-purple-300 border-t-[#6C3FC5] rounded-full animate-spin" />
@@ -253,20 +191,10 @@ export default function ReportsPage() {
                   <div>
                     <p className="text-base font-semibold text-gray-700">Chưa đủ dữ liệu biểu đồ</p>
                     <p className="text-sm text-gray-400 mt-1 max-w-xs">
-<<<<<<< HEAD
                       Bạn cần thêm giao dịch trong kỳ hạn này để xem biểu đồ phân tích thu chi.
                     </p>
                   </div>
                   <Link href="/transactions" className="flex items-center gap-2 px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-=======
-                      Bạn cần thêm giao dịch trong kỳ hạn này để có thể xem biểu đồ phân tích xu hướng thu chi và các khoản chi tiêu lớn.
-                    </p>
-                  </div>
-                  <Link
-                    href="/transactions"
-                    className="flex items-center gap-2 px-5 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-                  >
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     Quay lại Giao dịch <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -277,15 +205,11 @@ export default function ReportsPage() {
                     <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                     <YAxis
                       tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false}
-                      tickFormatter={(v) => v >= 1_000_000 ? `${(v/1_000_000).toFixed(0)}tr` : `${v/1000}k`}
+                      tickFormatter={(v) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(0)}tr` : `${v / 1000}k`}
                     />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="income"  name="Thu nhập" fill="#6C3FC5" radius={[6,6,0,0]} />
-                    <Bar dataKey="expense" name="Chi tiêu" fill="#E9D5FF" radius={[6,6,0,0]} />
-<<<<<<< HEAD
-=======
-                    <Line type="monotone" dataKey="expense" stroke="#9CA3AF" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
+                    <Bar dataKey="income" name="Thu nhập" fill="#6C3FC5" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="expense" name="Chi tiêu" fill="#E9D5FF" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -294,10 +218,6 @@ export default function ReportsPage() {
             {/* Pie chart */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 mb-6">Chi tiêu theo danh mục</h3>
-<<<<<<< HEAD
-=======
-
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
               {loading ? (
                 <div className="h-64 flex items-center justify-center">
                   <div className="w-8 h-8 border-2 border-purple-300 border-t-[#6C3FC5] rounded-full animate-spin" />
@@ -306,36 +226,15 @@ export default function ReportsPage() {
                 <div className="h-64 flex flex-col items-center justify-center gap-3 text-center px-2">
                   <PieChart className="w-10 h-10 text-gray-200" />
                   <p className="text-sm text-gray-400 leading-relaxed">
-<<<<<<< HEAD
                     Biểu đồ tròn sẽ hiển thị tỷ lệ chi tiêu cho từng danh mục sau khi có giao dịch.
-=======
-                    Biểu đồ tròn sẽ hiển thị tỷ lệ chi tiêu cho từng danh mục (Ăn uống, Di chuyển, Mua sắm...) sau khi có giao dịch.
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                   </p>
                 </div>
               ) : (
                 <div>
-<<<<<<< HEAD
                   <div className="relative">
                     <ResponsiveContainer width="100%" height={200}>
                       <RPieChart>
                         <Pie data={data!.categories} dataKey="amount" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={90} strokeWidth={0}>
-=======
-                  {/* Donut */}
-                  <div className="relative">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <RPieChart>
-                        <Pie
-                          data={data!.categories}
-                          dataKey="amount"
-                          nameKey="name"
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={90}
-                          strokeWidth={0}
-                        >
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                           {data!.categories.map((_, i) => (
                             <Cell key={i} fill={CAT_COLORS[i % CAT_COLORS.length]} />
                           ))}
@@ -346,32 +245,16 @@ export default function ReportsPage() {
                         />
                       </RPieChart>
                     </ResponsiveContainer>
-<<<<<<< HEAD
-=======
-                    {/* Center label */}
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       <p className="text-xs text-gray-400">Tổng chi</p>
                       <p className="text-sm font-bold text-gray-800">{formatVND(data!.stats.totalExpense)}</p>
                     </div>
                   </div>
-<<<<<<< HEAD
-=======
-
-                  {/* Legend */}
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                   <div className="mt-3 space-y-2">
                     {data!.categories.map((cat, i) => (
                       <div key={cat.name} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-<<<<<<< HEAD
                           <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CAT_COLORS[i % CAT_COLORS.length] }} />
-=======
-                          <span
-                            className="w-2.5 h-2.5 rounded-full shrink-0"
-                            style={{ background: CAT_COLORS[i % CAT_COLORS.length] }}
-                          />
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
                           <div>
                             <p className="text-sm text-gray-700">{cat.name}</p>
                             <p className="text-xs text-gray-400">{cat.percent}%</p>

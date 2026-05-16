@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 
 import { useState } from "react";
@@ -21,7 +20,7 @@ export default function SignInPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account: form.email , password: form.password }),
+        body: JSON.stringify({ account: form.email, password: form.password }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -33,55 +32,24 @@ export default function SignInPage() {
       const walletRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const wallets = await walletRes.json();
-      const hasWallet = Array.isArray(wallets) ? wallets.length > 0 : !!wallets?.data?.length;
-      router.push(hasWallet ? "/dashboard" : "/pre-wallet");
+
+      let hasWallet = false;
+      if (walletRes.ok) {
+        const wallets = await walletRes.json();
+        hasWallet = Array.isArray(wallets)
+          ? wallets.length > 0
+          : !!wallets?.data?.length;
+      }
+
+      router.push(hasWallet ? "/Dashboard" : "/pre-wallet");
     } catch (e: any) {
       setErr(e.message);
     } finally {
       setLoading(false);
-=======
-"use client"
-import { useState } from "react"
-import "./SignIn.css"
-import api from '@/lib/axios'
-import Link from "next/link"
-
-export default function SignUp() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-
-  const handleLogin = async () => {
-    console.log("Đã bấm nút!");
-    setError("")
-    setLoading(true)
-
-    try {
-      const { data } = await api.post('/auth/login', { email, password })
-      console.log("Đăng nhập thành công:", data)
-
-      // Lưu token nếu có
-      if (data.access_token) {
-        localStorage.setItem('access_token', data.access_token)
-      }
-
-      // Chuyển trang sau khi login thành công
-      window.location.href = '/users'
-
-    } catch (err: any) {
-      console.error("Lỗi:", err)
-      setError(err.response?.data?.message || "Đăng nhập thất bại!")
-    } finally {
-      setLoading(false)
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     }
   }
 
   return (
-<<<<<<< HEAD
     <div className="min-h-screen flex bg-[#f7f7f9] font-sans">
 
       {/* ── LEFT PANEL ── */}
@@ -89,9 +57,9 @@ export default function SignUp() {
 
         {/* Logo */}
         <div className="flex items-center gap-10 mb-3">
-          
+
           <img src="/download.svg" className="w-100 h-50 mb-1" />
-         
+
         </div>
 
         {/* Heading */}
@@ -160,7 +128,7 @@ export default function SignUp() {
 
         {/* Footer links */}
         <div className="mt-6 flex flex-col items-center gap-4">
-          <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline font-medium">
+          <Link href="/EnterMail" className="text-sm text-blue-600 hover:underline font-medium">
             Quên mật khẩu?
           </Link>
           <div className="w-full border-t border-gray-200" />
@@ -236,9 +204,9 @@ export default function SignUp() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    {[["#22c55e","Ăn uống"],["#f59e0b","Mua sắm"],["#818cf8","Hóa đơn"]].map(([c,l])=>(
+                    {[["#22c55e", "Ăn uống"], ["#f59e0b", "Mua sắm"], ["#818cf8", "Hóa đơn"]].map(([c, l]) => (
                       <div key={l} className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full" style={{background:c}}/>
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: c }} />
                         <span className="text-[8px] text-gray-500">{l}</span>
                       </div>
                     ))}
@@ -248,10 +216,10 @@ export default function SignUp() {
                 {/* Rows */}
                 <div className="text-[8px] text-gray-500 mb-2 font-medium">Tổng chi tiêu: 15,500,000đ</div>
                 {[
-                  {icon:"🍜",name:"Ăn uống",d1:"07/08/2023",amt:"48,000đ",d2:"10/06/2023",pct:"2,500%",bar:"bg-green-400",w:"w-full",total:"15,500,000đ"},
-                  {icon:"🛍",name:"Mua sắm",d1:"23/08/2023",amt:"3,500đ",d2:"10/06/2023",pct:"2,500%",bar:"bg-yellow-400",w:"w-1/6",total:"2,500,000đ"},
-                  {icon:"📋",name:"Hóa đơn",d1:"07/08/2023",amt:"300,000đ",d2:"27/09/2023",pct:"3,00%",bar:"bg-gray-300",w:"w-1/12",total:"300,000đ"},
-                ].map((r)=>(
+                  { icon: "🍜", name: "Ăn uống", d1: "07/08/2023", amt: "48,000đ", d2: "10/06/2023", pct: "2,500%", bar: "bg-green-400", w: "w-full", total: "15,500,000đ" },
+                  { icon: "🛍", name: "Mua sắm", d1: "23/08/2023", amt: "3,500đ", d2: "10/06/2023", pct: "2,500%", bar: "bg-yellow-400", w: "w-1/6", total: "2,500,000đ" },
+                  { icon: "📋", name: "Hóa đơn", d1: "07/08/2023", amt: "300,000đ", d2: "27/09/2023", pct: "3,00%", bar: "bg-gray-300", w: "w-1/12", total: "300,000đ" },
+                ].map((r) => (
                   <div key={r.name} className="flex items-center gap-2 py-1.5 border-b border-gray-100 last:border-0">
                     <span className="text-base">{r.icon}</span>
                     <div className="flex-1 min-w-0">
@@ -283,94 +251,7 @@ export default function SignUp() {
       </div>
 
       {/* User avatar bottom left */}
-      <div className="fixed bottom-5 left-5 w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-bold shadow-lg">
-        N
-      </div>
+
     </div>
   );
-=======
-    <div className="main-container">
-      <div className="left-section">
-        <h1>
-          LET'S start by logging to your
-          <br />
-          SmartBudget account
-        </h1>
-
-        <form>
-          <div className="form-group">
-            <input
-              type="email"
-              className="input-custom"
-              placeholder="Enter Your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)} // ← thêm
-            />
-          </div>
-
-          <div className="form-group" style={{ position: "relative" }}>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="input-custom"
-              placeholder="Enter Your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} // ← thêm
-            />
-            <i
-              className={showPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"}
-              id="show-password"
-              onClick={() => setShowPassword(!showPassword)}
-            ></i>
-          </div>
-
-          {/* Hiện lỗi nếu có */}
-          {error && (
-            <p style={{ color: 'red', fontSize: '14px' }}>{error}</p>
-          )}
-
-          <div className="options-row" style={{ margin: "0", fontWeight: "400", color: "#0E64D1", fontSize: "14px" }}>
-            <div className="remember-me">
-              <input type="checkbox" id="rememberMe" />
-              <label htmlFor="rememberMe">Remember me</label>
-            </div>
-            <a href="/EnterMail" className="forgot-password">
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={handleLogin}
-            disabled={loading}
-          >
-            {loading ? "Đang đăng nhập..." : "Log In"}
-          </button>
-
-          <Link href="/signup" className="btn-dark" style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            textDecoration: "none",
-            padding: "10px 20px",
-            borderRadius: "10px",
-            backgroundColor: "#111827",
-            color: "#fff",
-            fontSize: "14px",
-            fontWeight: "600",
-            width: "100%",
-            height: "48px",
-            marginBottom: "15px"
-          }}>
-            Đăng ký
-          </Link>
-        </form>
-      </div>
-
-      <div className="right-section">
-        <img className="img" src="\icon.png" alt="App preview" />
-      </div>
-    </div>
-  )
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 }

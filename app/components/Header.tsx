@@ -1,25 +1,42 @@
 "use client";
 
-<<<<<<< HEAD
 import { Bell, Search, ChevronDown, User, KeyRound, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import api from "@/lib/axios";
+import { getSettings } from "@/lib/api";
+import { getNotifications, Notification } from "@/lib/api";
+
 
 interface UserInfo {
   name?: string;
+
 }
 
 export default function Header({ user: userProp }: { user?: UserInfo }) {
-  const router          = useRouter();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(userProp ?? null);
-  const menuRef         = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const [notifOpen, setnotifOpen] = useState(false);
 
-  const initials    = user?.name?.trim()
+  const initials = user?.name?.trim()
     ? user.name.trim().split(" ").map((n) => n[0]).slice(-2).join("").toUpperCase()
     : "NB";
-  const displayName = user?.name?.trim() || "Nguyễn Văn B";
+  const displayName = user?.name?.trim() || "Người dùng";
+  async function refreshNotifs() {
+  try {
+    const data = await getNotifications();
+    setNotifs(data);
+  } catch {}
+}
+
+// Lắng nghe event
+useEffect(() => {
+  window.addEventListener("notif-update", refreshNotifs);
+  return () => window.removeEventListener("notif-update", refreshNotifs);
+}, []);
 
   // Fetch user từ API nếu chưa có
   useEffect(() => {
@@ -29,9 +46,9 @@ export default function Header({ user: userProp }: { user?: UserInfo }) {
     }
     async function loadUser() {
       try {
-        const { data } = await api.get("/users/me");
+        const data = await getSettings();
         setUser(data);
-      } catch {}
+      } catch { }
     }
     loadUser();
   }, [userProp]);
@@ -46,32 +63,34 @@ export default function Header({ user: userProp }: { user?: UserInfo }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  useEffect(() => {
+    async function handleUserUpdated() {
+      const data = await getSettings();
+      setUser(data);
+    }
+    window.addEventListener("user-updated", handleUserUpdated);
+    return () => window.removeEventListener("user-updated", handleUserUpdated);
+  }, []);
+  useEffect(() => {
+    getNotifications().then(setNotifs).catch(() => { });
+    const interval = setInterval(() => {
+      getNotifications().then(setNotifs).catch(() => { });
+    }, 30000); // polling 30 giây
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleLogout() {
     setOpen(false);
     try {
       await api.post("/auth/logout");
-    } catch {}
+    } catch { }
     localStorage.removeItem("access_token");
     router.push("/signin");
   }
 
   return (
     <header className="h-16 bg-white border-b border-gray-100 px-8 flex items-center gap-4 shrink-0">
-   
-=======
-import { Bell, Search, ChevronDown } from "lucide-react";
-import { User } from "../types";
 
-export default function Header({ user }: { user?: User }) {
-  const initials = user?.name
-    ? user.name.split(" ").map((n : string) => n[0]).slice(-2).join("").toUpperCase()
-    : "NB";
-
-  return (
-    <header className="h-16 bg-white border-b border-gray-100 px-8 flex items-center gap-4 shrink-0">
-      <h2 className="text-base font-bold text-gray-900 mr-4 whitespace-nowrap">Trang chủ</h2>
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 
       {/* Search */}
       <div className="flex-1 max-w-md relative">
@@ -84,16 +103,36 @@ export default function Header({ user }: { user?: User }) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-<<<<<<< HEAD
         {/* Bell */}
-=======
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition">
-          <Bell className="w-5 h-5 text-gray-500" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
-        </button>
+        <div className="relative">
+          <button onClick={() => setnotifOpen(!notifOpen)} className="relative">
+            <Bell className="w-5 h-5 text-gray-600" />
+            {notifs.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 text-white text-[10px] rounded-full flex-items-center justify-content">{notifs.length}</span>
+            )}
+          </button>
+          {notifOpen && (
+            <div className="absolute right-0 top-8 w-80 bg-white rounded-2x1 shadow-x1 border border-gray-100 z-50 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="text-sm font-bold text-gray-900">Thông báo</p>
+              </div>
+              <div className="max-h-80 overflow-y-auto">
+                {notifs.length === 0 ? (
+                  <p className="text-sm text-gray-400 text-center py-6">Không có thông báo</p>) : (
+                  notifs.map((n) => (
+                    <div key={n.id} className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50">
+                      <p className="text-sm text-gray-800">{n.message}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {new Date(n.time).toLocaleDateString('vi-VN')}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
-<<<<<<< HEAD
         {/* User dropdown */}
         <div className="relative" ref={menuRef}>
           <button
@@ -112,7 +151,7 @@ export default function Header({ user }: { user?: User }) {
               <MenuItem
                 icon={User}
                 label="Thông tin tài khoản"
-                onClick={() => { setOpen(false); router.push("/settings"); }}
+                onClick={() => { setOpen(false); router.push("/settingapp"); }}
               />
               <MenuItem
                 icon={KeyRound}
@@ -142,24 +181,11 @@ function MenuItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-        danger ? "text-red-500 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50"
-      }`}
+      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${danger ? "text-red-500 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50"
+        }`}
     >
       <Icon className="w-4 h-4" />
       {label}
     </button>
   );
-=======
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-100 transition">
-          <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold text-yellow-900">
-            {initials}
-          </div>
-          <span className="text-sm font-medium text-gray-700">{user?.name ?? "Nguyễn Văn B"}</span>
-          <ChevronDown className="w-4 h-4 text-gray-400" />
-        </button>
-      </div>
-    </header>
-  );
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 }

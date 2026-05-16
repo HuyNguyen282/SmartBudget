@@ -7,28 +7,18 @@
 }
 
 body {
-<<<<<<< HEAD
     background-color: #E6D7EE;
-=======
-    background-color: #D6EADF;
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     min-height: 100vh;
 }
 
 /* --- MAIN CONTAINER --- */
 .main-container {
-<<<<<<< HEAD
   /* Đổi từ tím sang màu xám trắng rất nhạt hoặc trắng tinh */
   background-color: #F8FAFC; 
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-=======
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 }
 
 /* --- LEFT SECTION --- */
@@ -78,7 +68,6 @@ h1 {
 
 /* --- INPUT --- */
 .input-custom {
-<<<<<<< HEAD
   /* Input nên làm nền trắng, viền thật mảnh */
   background-color: #FFFFFF !important;
   border: 1px solid #E2E8F0 !important;
@@ -86,32 +75,13 @@ h1 {
   padding: 12px 16px;
   color: #1E293B;
 }
-=======
-    width: 100%;
-    font-size: 14px;
-    padding: 13px 16px;
-    padding-right: 40px;
-    border-radius: 6px;
-    border: 1px solid #AAB7B0;
-    background: rgba(235, 245, 238, 0.6);
-    color: #333;
-    transition: 0.3s;
-}
-
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 .input-custom::placeholder {
     color: #999;
 }
 
 .input-custom:focus {
-<<<<<<< HEAD
   border-color: #0866FF !important;
   box-shadow: 0 0 0 4px rgba(8, 102, 255, 0.05);
-=======
-    border-color: #0E64D1;
-    background: #fff;
-    outline: none;
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 }
 
 /* --- SHOW PASSWORD ICON --- */
@@ -220,11 +190,7 @@ button,
 }
 
 .right-section img {
-<<<<<<< HEAD
     max-width: 100%;
-=======
-    max-width: 96%;
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
     height: auto;
     transform: translate(-10px, 10px);
 }
@@ -273,7 +239,6 @@ button,
   color: #0E64D1;
   font-weight: 600;
   text-decoration: none;
-<<<<<<< HEAD
 }
 /* Hiệu ứng khi di chuột vào nút Đăng nhập */
 .btn-fb-login:hover {
@@ -296,6 +261,4 @@ button,
     border-color: #0866FF;
     outline: none;
     box-shadow: 0 0 0 2px rgba(8, 102, 255, 0.1);
-=======
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 }

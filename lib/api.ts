@@ -1,13 +1,12 @@
 // ─── Config ────────────────────────────────────────────────────────────────────
-// Tạo file .env.local và thêm: NEXT_PUBLIC_API_URL=http://localhost:8000/api
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
 // ─── Types (giống store.ts cũ, không đổi) ─────────────────────────────────────
 export interface Transaction {
   id: string;
   date: string;
   name: string;
-  category: string;
+  category: number;
   amount: number;
   note?: string;
 }
@@ -18,13 +17,19 @@ export interface BudgetGoal {
   limit: number;
   color: string;
 }
+export interface Category{
+  id: number;
+  name: string;
+  type: string;
+}
+
 
 export interface FinancialGoal {
   id: string;
   title: string;
   targetAmount: number;
   savedAmount: number;
-  deadline: string;
+  deadline?: string;
   color: string;
   icon: string;
 }
@@ -34,6 +39,7 @@ export interface UserSettings {
   avatar: string;
   currency: string;
   monthlyIncomeTarget: number;
+  email?: string;
 }
 
 export interface StatsResponse {
@@ -41,6 +47,7 @@ export interface StatsResponse {
   income: number;
   expense: number;
 }
+
 
 export interface ChartPoint {
   day: number;
@@ -56,19 +63,34 @@ export interface SpendingStructure {
 export interface AiForecast {
   forecastExpense: number;
   forecastIncome: number;
+  forecastBalance: number;   // ← thêm
   mae: number;
   trend: number;
+  accuracy: number;          // ← thêm
   nextMonthLabel: string;
-  insights: string[];
-  monthly: { income: number; expense: number }[];
+  insights: {                // ← đổi từ string[] sang object[]
+    type: "success" | "warning" | "info";
+    title: string;
+    message: string;
+    confidence: number;
+  }[];
+  monthly: { month: string; income: number; expense: number }[];
   avgIncome: number;
   avgExpense: number;
   catData: { cat: string; current: number }[];
+  savingRate: number;        // ← thêm
+  financialHealth: "Tốt" | "Trung bình" | "Cần cải thiện";  // ← thêm
+  transactionsAnalyzed: number;  // ← thêm
 }
-
+export const getDashboardStats = () => req<{stats: {balance: number}}>("/dashboard?period=month");
+export interface notifications {
+  id : string;
+  type: 'warning' | 'success' | 'income' | 'expense';
+  message: string;
+  time: string;
+}
 // ─── Auth helper ───────────────────────────────────────────────────────────────
 function getToken(): string | null {
-<<<<<<< HEAD
   if(typeof window === "undefined") return null;
   return localStorage.getItem("access_token");
 
@@ -105,14 +127,6 @@ async function refreshAccessToken(): Promise<string> {
 // ─── Core fetch wrapper ────────────────────────────────────────────────────────
 // ─── Core fetch wrapper ────────────────────────────────────────────────────────
 async function req<T>(path: string, options: RequestInit = {}, isRetry = false): Promise<T> {
-=======
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("access_token");
-}
-
-// ─── Core fetch wrapper ────────────────────────────────────────────────────────
-async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -122,7 +136,6 @@ async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...(options.headers ?? {}),
     },
   });
-<<<<<<< HEAD
 
   // Token hết hạn → thử refresh 1 lần
   if (res.status === 401 && !isRetry) {
@@ -135,24 +148,18 @@ async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
     }
   }
 
-=======
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error((err as any).message ?? `Lỗi ${res.status}: ${res.statusText}`);
   }
-<<<<<<< HEAD
-
-=======
-  // 204 No Content
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
   if (res.status === 204) return undefined as unknown as T;
   return res.json();
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────────
 // GET /dashboard/stats  → { balance, income, expense }
-export const getStats = () => req<StatsResponse>("/dashboard/stats");
+export const getStats = () => req<StatsResponse>("/dashboard");
+
 
 // GET /dashboard/chart?days=30  → [{ day, amount }]
 export const getChartData = (days: 7 | 30) =>
@@ -197,19 +204,19 @@ export const deleteBudgetGoal = (id: string) =>
 
 // ─── Financial Goals ───────────────────────────────────────────────────────────
 // GET /financial-goals
-export const getFinancialGoals = () => req<FinancialGoal[]>("/financial-goals");
+export const getFinancialGoals = () => req<FinancialGoal[]>("/goals");
 
 // POST /financial-goals
 export const createFinancialGoal = (data: Omit<FinancialGoal, "id">) =>
-  req<FinancialGoal>("/financial-goals", { method: "POST", body: JSON.stringify(data) });
+  req<FinancialGoal>("/goals", { method: "POST", body: JSON.stringify(data) });
 
 // PATCH /financial-goals/:id
 export const updateFinancialGoal = (id: string, data: Partial<Omit<FinancialGoal, "id">>) =>
-  req<FinancialGoal>(`/financial-goals/${id}`, { method: "PATCH", body: JSON.stringify(data) });
+  req<FinancialGoal>(`/goals/${id}`, { method: "PATCH", body: JSON.stringify(data) });
 
 // DELETE /financial-goals/:id
 export const deleteFinancialGoal = (id: string) =>
-  req<void>(`/financial-goals/${id}`, { method: "DELETE" });
+  req<void>(`/goals/${id}`, { method: "DELETE" });
 
 // ─── Settings ──────────────────────────────────────────────────────────────────
 // GET /settings
@@ -222,6 +229,9 @@ export const saveSettings = (data: UserSettings) =>
 // ─── AI Forecast ───────────────────────────────────────────────────────────────
 // GET /ai/forecast
 export const getAiForecast = () => req<AiForecast>("/ai/forecast");
+
+
+export const getCategories = () => req<Category[]>("/category")
 
 // ─── Budget Progress (computed on backend) ────────────────────────────────────
 export interface BudgetProgress extends BudgetGoal {
@@ -243,3 +253,99 @@ export const fmtDate = (s: string) => {
   const [y, m, d] = s.split("-");
   return `${d}/${m}/${y}`;
 };
+export interface ReportStats {
+  totalIncome: number;
+  totalExpense: number;
+  netBalance: number;
+}
+
+export interface CashFlowPoint {
+  label: string;
+  income: number;
+  expense: number;
+}
+
+export interface CategoryItem {
+  name: string;
+  amount: number;
+  percent: number;
+  color: string;
+}
+export interface ReportData {
+  stats: ReportStats;
+  cashFlow: CashFlowPoint[];
+  categories: CategoryItem[];
+}
+
+const CAT_COLORS = ["#EF4444", "#3B82F6", "#F59E0B", "#10B981", "#9CA3AF", "#8B5CF6", "#F97316"];
+export const depositGoal = (id: string, amount: number) =>
+  req(`/goals/${id}/deposit`, { method: 'PATCH', body: JSON.stringify({ amount }) });
+export const getReport = async (period: string): Promise<ReportData> => {
+  const [transactions, categoryList] = await Promise.all([
+    getTransactions(500),
+    getCategories(),
+  ]);
+
+  const now = new Date();
+  const filtered = (transactions as any[]).filter((t) => {
+    const d = new Date(t.transactionDate ?? t.date);
+    if (period === "month")
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (period === "lastmonth") {
+      const last = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      return d.getMonth() === last.getMonth() && d.getFullYear() === last.getFullYear();
+    }
+    return true;
+  });
+
+  // Dùng field "type" để phân biệt thu/chi
+  const isIncome  = (t: any) => t.type === "income";
+  const isExpense = (t: any) => t.type === "expense";
+
+  const totalIncome  = filtered.filter(isIncome).reduce((s, t) => s + Number(t.amount), 0);
+  const totalExpense = filtered.filter(isExpense).reduce((s, t) => s + Number(t.amount), 0);
+
+  // Cash flow group theo ngày
+  const byDay: Record<string, { income: number; expense: number }> = {};
+  filtered.forEach((t: any) => {
+    const label = (t.transactionDate ?? t.date).slice(0, 10);
+    if (!byDay[label]) byDay[label] = { income: 0, expense: 0 };
+    if (isIncome(t))  byDay[label].income  += Number(t.amount);
+    if (isExpense(t)) byDay[label].expense += Number(t.amount);
+  });
+  const cashFlow = Object.entries(byDay)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([label, v]) => ({ label, ...v }));
+
+  // Categories (chỉ chi tiêu)
+  const byCat: Record<number, number> = {};
+  filtered.filter(isExpense).forEach((t: any) => {
+    const catId = t.categoryId ?? t.category;
+    byCat[catId] = (byCat[catId] ?? 0) + Number(t.amount);
+  });
+  const categories: CategoryItem[] = Object.entries(byCat).map(([catId, amount], i) => {
+    const catName = categoryList.find((c) => c.id === Number(catId))?.name ?? `Danh mục ${catId}`;
+    return {
+      name: catName,
+      amount,
+      percent: totalExpense > 0 ? Math.round((amount / totalExpense) * 100) : 0,
+      color: CAT_COLORS[i % CAT_COLORS.length],
+    };
+  });
+
+  return {
+    stats: { totalIncome, totalExpense, netBalance: totalIncome - totalExpense },
+    cashFlow,
+    categories,
+};
+}; // ← đây là dòng kết thúc của object/block trước
+
+// ─── Notifications ─────────────────────────────────────────────────────────────
+export interface Notification {
+  id: string;
+  type: 'warning' | 'success' | 'income' | 'expense';
+  message: string;
+  time: string;
+}
+
+export const getNotifications = () => req<Notification[]>('/notifications');

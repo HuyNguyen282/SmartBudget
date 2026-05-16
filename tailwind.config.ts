@@ -18,7 +18,6 @@ const config: Config = {
           light: "#F0E9FF",
         },
       },
-<<<<<<< HEAD
       // Đưa keyframes ra trực tiếp bên ngoài extend
       keyframes: {
         fadeIn: {
@@ -33,11 +32,6 @@ const config: Config = {
     },
   },
   plugins: [], // plugins nằm ngang hàng với theme và content
-=======
-    },
-  },
-  plugins: [],
->>>>>>> 0aa3f7ac008efe0f5ebb790c40243eb4cbf1ebc0
 };
 
 export default config;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X, Target, DollarSign, Calendar, AlignLeft } from "lucide-react";
 import { Goal } from "@/app/types";
+import { createFinancialGoal, updateFinancialGoal } from "@/lib/api";
 
 interface GoalModalProps {
   open: boolean;
@@ -54,29 +55,29 @@ export default function GoalModal({ open, onClose, onSaved, editGoal }: GoalModa
   }
 
   async function handleSave() {
-    if (!form.name.trim())          return setError("Vui lòng nhập tên mục tiêu.");
+    if (!form.name.trim()) return setError("Vui lòng nhập tên mục tiêu.");
     if (!form.targetAmount || Number(form.targetAmount) <= 0)
-                                    return setError("Vui lòng nhập số tiền mục tiêu.");
+      return setError("Vui lòng nhập số tiền mục tiêu.");
     setError("");
     setSaving(true);
     try {
-      const url    = isEdit
-        ? `${process.env.NEXT_PUBLIC_API_URL}/goals/${editGoal!.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/goals`;
-      const method = isEdit ? "PATCH" : "POST";
-      const res = await fetch(url, {
-        method,
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name:          form.name,
-          targetAmount:  Number(form.targetAmount),
-          currentAmount: Number(form.currentAmount || 0),
-          deadline:      form.deadline || undefined,
-          note:          form.note,
-        }),
-      });
-      if (!res.ok) throw new Error();
+      if (isEdit) {
+        await updateFinancialGoal(editGoal!.id, {
+          title: form.name,
+          targetAmount: Number(form.targetAmount),
+          savedAmount: Number(form.currentAmount || 0),
+          deadline: form.deadline || undefined,
+        });
+      } else {
+        await createFinancialGoal({
+          title: form.name,
+          targetAmount: Number(form.targetAmount),
+          savedAmount: Number(form.currentAmount || 0),
+          deadline: form.deadline || undefined,
+          color: '#6C3FC5',
+          icon: 'target',
+        });
+      }
       onSaved();
     } catch {
       setError("Có lỗi xảy ra. Vui lòng thử lại.");
