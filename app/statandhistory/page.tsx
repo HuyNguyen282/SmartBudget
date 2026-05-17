@@ -138,7 +138,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* Stat cards */}
+          
           {!isEmpty && !loading && data && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
               <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">

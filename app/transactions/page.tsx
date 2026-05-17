@@ -45,6 +45,7 @@ export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingTx, setEditingTx] = useState<any | null>(null)
 
   useEffect(() => { load(); }, [search, timeFilter, page]);
 
@@ -91,7 +92,7 @@ export default function TransactionsPage() {
         type: formData.type,
       });
       await load();
-       window.dispatchEvent(new Event("notif-update")); // thêm dòng này
+      window.dispatchEvent(new Event("notif-update")); // thêm dòng này
     } catch (err) {
       console.warn("Lưu thất bại:", err);
     }
@@ -103,11 +104,29 @@ export default function TransactionsPage() {
       await api.delete(`/transactions/${id}`);
       setTransactions((prev) => prev.filter((tx) => tx.id !== id));
       setTotal((prev) => prev - 1);
-       window.dispatchEvent(new Event("notif-update")); // thêm dòng này
+      window.dispatchEvent(new Event("notif-update")); // thêm dòng này
     } catch (err) {
       console.warn("Xoá thất bại:", err);
     }
   }
+  async function handleEdit(formData: TransactionFormData) {
+    if (!editingTx) return;
+    try {
+      await api.patch(`/transactions/${editingTx.id}`, {
+        name: formData.name,
+        amount: formData.amount,
+        categoryId: formData.category,
+        transactionDate: formData.date,
+        note: formData.note,
+        type: formData.type,
+      });
+      await load();
+      window.dispatchEvent(new Event("notif-update"));
+    } catch (err) {
+      console.warn("Sửa thất bại:", err);
+    }
+  }
+
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -245,7 +264,13 @@ export default function TransactionsPage() {
                           </td>
                           <td className="px-6 py-3.5">
                             <div className="flex items-center justify-center gap-2">
-                              <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors">
+                              <button
+                                onClick={() => {
+                                  setEditingTx(tx);
+                                  setModalOpen(true);
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors"
+                              >
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
@@ -295,8 +320,18 @@ export default function TransactionsPage() {
 
       <AddTransactionModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSave}
+        onClose={() => { setModalOpen(false); setEditingTx(null); }}
+        onSave={editingTx ? handleEdit : handleSave}
+        initialData={editingTx ? {
+          id: editingTx.id,
+          name: editingTx.name,
+          type: editingTx.type,
+          amount: Math.abs(editingTx.amount),
+          category: editingTx.categoryId ?? editingTx.category?.id,
+          date: (editingTx.transactionDate ?? editingTx.date)?.slice(0, 10),
+          wallet: editingTx.wallet ?? "Tiền mặt",
+          note: editingTx.note ?? "",
+        } : undefined}
       />
     </div>
   );

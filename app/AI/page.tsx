@@ -14,7 +14,6 @@ import {
   Tooltip, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 
-// ── Types ─────────────────────────────────────────────────
 interface AiInsight {
   type: "success" | "warning" | "info";
   title: string;
@@ -40,7 +39,6 @@ interface AiForecastResponse {
   transactionsAnalyzed: number;
 }
 
-// ── Helpers ───────────────────────────────────────────────
 function formatVND(v: number) {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -178,7 +176,7 @@ export default function AIForecastPage() {
         <Header />
         <main className="flex-1 overflow-y-auto p-8">
 
-          {/* Tiêu đề */}
+{/* tiêu đeef */}
           <div className="flex items-start justify-between mb-6">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -199,7 +197,7 @@ export default function AIForecastPage() {
             </button>
           </div>
 
-          {/* Status banner */}
+{/* banner */}
           <div className="bg-white border-2 border-[#6C3FC5] rounded-2xl px-5 py-4 mb-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center">
@@ -226,7 +224,7 @@ export default function AIForecastPage() {
             </span>
           </div>
 
-          {/* Metric cards */}
+{/* cards */}
           <div className="grid grid-cols-4 gap-4 mb-5">
             {[
               {
@@ -275,10 +273,10 @@ export default function AIForecastPage() {
             ))}
           </div>
 
-          {/* Bottom grid */}
+ {/* grid */}
           <div className="grid grid-cols-2 gap-5">
 
-            {/* AI Insights */}
+{/* ai insights */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-yellow-500" />
@@ -311,7 +309,7 @@ export default function AIForecastPage() {
               )}
             </div>
 
-            {/* Forecast chart */}
+   {/* charts */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#6C3FC5]" />
@@ -364,8 +362,7 @@ export default function AIForecastPage() {
                   <div className="w-4 h-0 border-t-2 border-dashed border-red-400" />Chi tiêu
                 </div>
               </div>
-
-              {/* Forecast summary */}
+{/* summary */}
               <div className="space-y-2 mb-4">
                 {[
                   {
@@ -411,7 +408,7 @@ export default function AIForecastPage() {
                 ))}
               </div>
 
-              {/* AI tip box */}
+{/* tipbox */}
               <div className="bg-gradient-to-br from-[#6C3FC5] to-purple-500 rounded-xl p-4 text-white">
                 <p className="text-xs font-semibold flex items-center gap-1.5 mb-1">
                   <Bot className="w-3.5 h-3.5" />

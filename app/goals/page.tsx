@@ -32,7 +32,7 @@ export default function GoalsPage() {
   const [editGoal, setEditGoal] = useState<Goal | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // Deposit state
+
   const [depositGoalId, setDepositGoalId] = useState<string | null>(null);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);

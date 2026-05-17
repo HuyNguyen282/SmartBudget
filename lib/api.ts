@@ -17,7 +17,7 @@ export interface BudgetGoal {
   limit: number;
   color: string;
 }
-export interface Category{
+export interface Category {
   id: number;
   name: string;
   type: string;
@@ -82,16 +82,16 @@ export interface AiForecast {
   financialHealth: "Tốt" | "Trung bình" | "Cần cải thiện";  // ← thêm
   transactionsAnalyzed: number;  // ← thêm
 }
-export const getDashboardStats = () => req<{stats: {balance: number}}>("/dashboard?period=month");
+export const getDashboardStats = () => req<{ stats: { balance: number } }>("/dashboard?period=month");
 export interface notifications {
-  id : string;
+  id: string;
   type: 'warning' | 'success' | 'income' | 'expense';
   message: string;
   time: string;
 }
 // ─── Auth helper ───────────────────────────────────────────────────────────────
 function getToken(): string | null {
-  if(typeof window === "undefined") return null;
+  if (typeof window === "undefined") return null;
   return localStorage.getItem("access_token");
 
 }
@@ -100,7 +100,7 @@ function getRefreshToken(): string | null {
   return localStorage.getItem("refresh_token");
 
 }
-function logout(){
+function logout() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   window.location.href = "/login";
@@ -149,8 +149,14 @@ async function req<T>(path: string, options: RequestInit = {}, isRetry = false):
   }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).message ?? `Lỗi ${res.status}: ${res.statusText}`);
+    let message = `Lỗi ${res.status}: ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (body?.message) message = Array.isArray(body.message)
+        ? body.message[0]       // NestJS validation trả về mảng
+        : body.message;
+    } catch (_) { }
+    throw new Error(message);
   }
   if (res.status === 204) return undefined as unknown as T;
   return res.json();
@@ -299,10 +305,10 @@ export const getReport = async (period: string): Promise<ReportData> => {
   });
 
   // Dùng field "type" để phân biệt thu/chi
-  const isIncome  = (t: any) => t.type === "income";
+  const isIncome = (t: any) => t.type === "income";
   const isExpense = (t: any) => t.type === "expense";
 
-  const totalIncome  = filtered.filter(isIncome).reduce((s, t) => s + Number(t.amount), 0);
+  const totalIncome = filtered.filter(isIncome).reduce((s, t) => s + Number(t.amount), 0);
   const totalExpense = filtered.filter(isExpense).reduce((s, t) => s + Number(t.amount), 0);
 
   // Cash flow group theo ngày
@@ -310,7 +316,7 @@ export const getReport = async (period: string): Promise<ReportData> => {
   filtered.forEach((t: any) => {
     const label = (t.transactionDate ?? t.date).slice(0, 10);
     if (!byDay[label]) byDay[label] = { income: 0, expense: 0 };
-    if (isIncome(t))  byDay[label].income  += Number(t.amount);
+    if (isIncome(t)) byDay[label].income += Number(t.amount);
     if (isExpense(t)) byDay[label].expense += Number(t.amount);
   });
   const cashFlow = Object.entries(byDay)
@@ -337,7 +343,7 @@ export const getReport = async (period: string): Promise<ReportData> => {
     stats: { totalIncome, totalExpense, netBalance: totalIncome - totalExpense },
     cashFlow,
     categories,
-};
+  };
 }; // ← đây là dòng kết thúc của object/block trước
 
 // ─── Notifications ─────────────────────────────────────────────────────────────

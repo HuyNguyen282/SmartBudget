@@ -10,6 +10,7 @@ interface AddTransactionModalProps {
   open: boolean;
   onClose: () => void;
   onSave?: (data: TransactionFormData) => void;
+  initialData?: TransactionFormData & { id?: string };
 }
 
 export interface TransactionFormData {
@@ -33,7 +34,7 @@ function today() {
   return new Date().toISOString().split("T")[0];
 }
 
-export default function AddTransactionModal({ open, onClose, onSave }: AddTransactionModalProps) {
+export default function AddTransactionModal({ open, onClose, onSave, initialData }: AddTransactionModalProps) {
   const [type, setType] = useState<TransactionType>("expense");
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -47,6 +48,27 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
   useEffect(() => {
     getCategories().then(setCategories);
   }, []);
+
+  // Prefill khi edit, reset khi thêm mới — phải đặt TRƯỚC early return
+  useEffect(() => {
+    if (open && initialData) {
+      setType(initialData.type);
+      setName(initialData.name);
+      setAmount(String(initialData.amount));
+      setCategory(initialData.category);
+      setDate(initialData.date);
+      setWallet(initialData.wallet);
+      setNote(initialData.note ?? "");
+    } else if (open && !initialData) {
+      setType("expense");
+      setName("");
+      setAmount("");
+      setCategory(0);
+      setDate(today());
+      setWallet("Tiền mặt");
+      setNote("");
+    }
+  }, [open, initialData]);
 
   if (!open) return null;
 
@@ -103,23 +125,23 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
 
   return (
     <>
-      {/* Backdrop */}
+
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
         onClick={handleClose}
       />
 
-      {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
 
-          {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-4 h-4 text-[#6C3FC5]" />
               </div>
-              <h2 className="text-base font-bold text-gray-900">Thêm giao dịch mới</h2>
+              <h2 className="text-base font-bold text-gray-900">
+                {initialData ? "Sửa giao dịch" : "Thêm giao dịch mới"}
+              </h2>
             </div>
             <button
               onClick={handleClose}
@@ -147,7 +169,7 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               ))}
             </div>
 
-            {/* Tên giao dịch */}
+      
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1.5 block">Tên giao dịch</label>
               <input
@@ -159,7 +181,7 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               />
             </div>
 
-            {/* Số tiền + Danh mục */}
+       
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1.5 block">Số tiền</label>
@@ -205,7 +227,6 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               </div>
             </div>
 
-            {/* Ngày + Ví */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1.5 block">Ngày giao dịch</label>
@@ -236,7 +257,7 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               </div>
             </div>
 
-            {/* Mô tả */}
+      
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1.5 block">Mô tả chi tiết</label>
               <div className="relative">
@@ -252,7 +273,7 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
             </div>
           </div>
 
-          {/* Footer */}
+          
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
             <button
               onClick={handleClose}
@@ -268,9 +289,9 @@ export default function AddTransactionModal({ open, onClose, onSave }: AddTransa
               {saving ? (
                 <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
               ) : (
-                <span className="text-base leading-none">+</span>
+                <span className="text-base leading-none">{initialData ? "✓" : "+"}</span>
               )}
-              Lưu giao dịch
+              {initialData ? "Cập nhật" : "Lưu giao dịch"}
             </button>
           </div>
         </div>

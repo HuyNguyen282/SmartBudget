@@ -22,12 +22,14 @@ export default function SignInPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ account: form.email, password: form.password }),
       });
+
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         throw new Error((d as any).message ?? "Email hoặc mật khẩu không đúng");
       }
       const data = await res.json();
       const token = data.access_token ?? data.token ?? "";
+      const role = data.role ?? "user";
       localStorage.setItem("access_token", token);
       const walletRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wallets`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -41,7 +43,11 @@ export default function SignInPage() {
           : !!wallets?.data?.length;
       }
 
-      router.push(hasWallet ? "/Dashboard" : "/pre-wallet");
+      if (role === 'admin') {
+        router.push("/Admin");
+      } else {
+        router.push(hasWallet ? "/Dashboard" : "/pre-wallet");
+      }
     } catch (e: any) {
       setErr(e.message);
     } finally {

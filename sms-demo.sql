@@ -29,13 +29,15 @@ CREATE TABLE wallets (
 drop table wallets;
 select * from wallets;
 
-
+-- ĐÃ SỬA LỖI Ở BẢNG NÀY (Thêm description, bỏ UNIQUE ở name, thêm UNIQUE ghép)
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL, 
+    description TEXT DEFAULT NULL, 
     type VARCHAR(50) DEFAULT 'expense',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT unique_name_type UNIQUE (name, type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 drop table categories;
@@ -44,10 +46,30 @@ INSERT INTO categories (name, type) VALUES
 ('Ăn uống', 'expense'),
 ('Di chuyển', 'expense'),
 ('Mua sắm', 'expense'),
-('Tiền nhà', 'expense'),
-('Lương', 'income');
+('Giải trí', 'expense'),
+('Y tế', 'expense'),
+('Giáo dục', 'expense'),
+('Hóa đơn', 'expense'),
+('Khác chi tiêu', 'expense'),
+('Lương', 'income'),
+('Thưởng', 'income'),
+('Đầu tư', 'income'),
+('Freelance', 'income'),
+('Quà tặng', 'income'),
+('Khác thu nhập', 'income');
 
 
+
+INSERT INTO categories (name, type, description) 
+VALUES ('Khác', 'expense', 'Mô tả mới') 
+ON DUPLICATE KEY UPDATE description = 'Mô tả mới';
+
+SELECT type, COUNT(*), SUM(amount) FROM transactions GROUP BY type;
+SELECT balance FROM wallets WHERE user_id = 27;
+DELETE FROM transactions WHERE user_id = 27;
+DELETE FROM wallets WHERE user_id = 27;
+INSERT INTO wallets (user_id, name, balance, categories, type) VALUES (27, 'Ví chính', 0, '', 'cash');
+DESCRIBE wallets;
 CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(12, 2) NOT NULL,
@@ -82,3 +104,4 @@ CREATE TABLE goals (
 
 drop table goals;
 select * from goals;
+UPDATE users SET name = 'Nguyễn Huy' WHERE email = 'huynq2@gmail.com';
